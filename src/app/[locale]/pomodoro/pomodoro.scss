@@ -1,0 +1,30 @@
+@use "@/styles/variables" as *;
+
+.pomodoro {
+  &__layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+
+    @include respond-down(lg) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__main {
+    position: sticky;
+    top: 1rem;
+
+    @include respond-down(lg) {
+      position: static;
+    }
+  }
+
+  &__stats {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

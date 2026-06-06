@@ -1,0 +1,228 @@
+@use "@/styles/variables" as *;
+
+.routine-card {
+  position: relative;
+  display: flex;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+
+  &__bar {
+    width: 5px;
+    flex-shrink: 0;
+    background: var(--accent, var(--brand));
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  &__title-wrap {
+    min-width: 0;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: 1.02rem;
+    font-weight: 700;
+    @include line-clamp(1);
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  &__time {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: $font-mono;
+
+    svg {
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+  }
+
+  &__tools {
+    display: flex;
+    gap: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  &__desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    @include line-clamp(2);
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.65rem 1rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    padding-top: 0.3rem;
+    border-top: 1px solid var(--border);
+
+    strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+  }
+
+  &__stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    &--streak {
+      color: var(--warning);
+      font-weight: 700;
+      svg {
+        width: 1.1rem;
+        height: 1.1rem;
+      }
+    }
+  }
+
+  // ─── Días (pastillas visuales) ───
+  &__daypills {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  &__pill {
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+
+    &--on {
+      box-shadow: 0 2px 6px var(--shadow);
+    }
+  }
+
+  &__freq {
+    margin-left: auto;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  // ─── Acciones de hoy ───
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &__btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem;
+    border-radius: $radius;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
+    transition: all 0.15s ease;
+
+    svg {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+
+    &--complete {
+      color: var(--success);
+      background: rgb(var(--success-rgb) / 0.1);
+      border-color: rgb(var(--success-rgb) / 0.3);
+      &:hover {
+        background: var(--success);
+        color: #fff;
+      }
+    }
+    &--skip {
+      color: var(--text-secondary);
+      background: var(--surface-2);
+      &:hover {
+        background: var(--surface-3);
+        color: var(--text);
+      }
+    }
+  }
+
+  &__state {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.55rem;
+    border-radius: $radius;
+    font-weight: 700;
+    font-size: 0.85rem;
+
+    svg {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
+
+    &--completed {
+      color: var(--success);
+      background: rgb(var(--success-rgb) / 0.13);
+    }
+    &--skipped {
+      color: var(--text-muted);
+      background: var(--surface-2);
+    }
+  }
+
+  // Estados visuales de la card en vista "hoy"
+  &--completed {
+    .routine-card__title {
+      color: var(--text-secondary);
+    }
+  }
+  &--skipped {
+    opacity: 0.7;
+  }
+}

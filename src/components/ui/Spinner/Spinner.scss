@@ -1,0 +1,17 @@
+@use "@/styles/variables" as *;
+
+.fl-spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: var(--surface-3);
+  border-top-color: var(--brand);
+  animation: spin 0.7s linear infinite;
+}
+
+.fl-spinner-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}

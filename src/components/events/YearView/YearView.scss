@@ -1,0 +1,101 @@
+@use "@/styles/variables" as *;
+
+.year-view {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+
+  @include respond-down(xl) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @include respond-down(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include respond-down(sm) {
+    grid-template-columns: 1fr;
+  }
+
+  &__month {
+    @include card;
+    padding: 0.85rem;
+  }
+
+  &__month-name {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: $font-display;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: capitalize;
+    color: var(--text);
+    padding: 0 0.2rem 0.5rem;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--brand);
+    }
+  }
+
+  &__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 2px;
+
+    span {
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+  }
+
+  &__day {
+    aspect-ratio: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: 6px;
+    transition: background 0.12s ease;
+
+    &:hover:not(:disabled) {
+      background: var(--surface-2);
+    }
+
+    &--outside {
+      visibility: hidden;
+    }
+
+    &--today {
+      background: var(--brand);
+      color: var(--on-brand);
+      font-weight: 700;
+    }
+
+    &--has::after {
+      content: "";
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--brand);
+    }
+
+    &--today.year-view__day--has::after {
+      background: var(--on-brand);
+    }
+  }
+}

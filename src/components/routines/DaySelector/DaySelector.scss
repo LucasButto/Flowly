@@ -1,0 +1,33 @@
+@use "@/styles/variables" as *;
+
+.day-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+
+  &__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.4rem;
+  }
+
+  &__day {
+    padding: 0.5rem 0;
+    border-radius: $radius-sm;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+
+    &:hover {
+      border-color: var(--border-strong);
+    }
+    &--on {
+      background: rgb(var(--brand-rgb) / 0.15);
+      border-color: rgb(var(--brand-rgb) / 0.5);
+      color: var(--brand);
+    }
+  }
+}

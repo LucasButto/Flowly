@@ -1,0 +1,164 @@
+@use "@/styles/variables" as *;
+
+.login-loader {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  background: var(--bg);
+  color: var(--text-secondary);
+}
+
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+
+  @include respond-down(lg) {
+    grid-template-columns: 1fr;
+  }
+
+  // ─── Aside (branding) ───
+  &__aside {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(150deg, #4f46e5, #7c3aed 60%, #9333ea);
+    color: #fff;
+    padding: clamp(2rem, 5vw, 4rem);
+    display: flex;
+    align-items: center;
+
+    @include respond-down(lg) {
+      display: none;
+    }
+  }
+
+  &__aside-content {
+    position: relative;
+    z-index: 2;
+    max-width: 460px;
+  }
+
+  &__glow {
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.35), transparent 65%);
+    bottom: -180px;
+    right: -120px;
+    filter: blur(10px);
+  }
+
+  &__headline {
+    font-family: $font-display;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 1.8rem 0 1rem;
+    color: #fff;
+
+    span {
+      opacity: 0.85;
+    }
+  }
+
+  &__pitch {
+    font-size: 1.05rem;
+    opacity: 0.92;
+    line-height: 1.5;
+    margin-bottom: 1.8rem;
+  }
+
+  &__features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+
+    li {
+      position: relative;
+      padding-left: 1.6rem;
+      font-size: 0.95rem;
+      opacity: 0.92;
+
+      &::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        font-weight: 700;
+      }
+    }
+  }
+
+  // ─── Main (login card) ───
+  &__main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: var(--bg);
+  }
+
+  &__card {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeInUp 0.4s ease;
+  }
+
+  &__card-brand {
+    display: none;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    @include respond-down(lg) {
+      display: flex;
+    }
+  }
+
+  &__welcome {
+    font-family: $font-display;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  &__sub {
+    color: var(--text-secondary);
+    margin: 0.6rem 0 2rem;
+    line-height: 1.5;
+  }
+
+  &__google {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 0.85rem 1.2rem;
+    border-radius: $radius;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.16s ease, transform 0.1s ease, box-shadow 0.16s ease;
+
+    &:hover {
+      background: var(--surface-2);
+      box-shadow: 0 6px 18px var(--shadow);
+    }
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &__legal {
+    margin-top: 2rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+}

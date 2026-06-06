@@ -1,0 +1,8 @@
+@use "@/styles/variables" as *;
+
+.coming-soon {
+  @include card;
+  background: var(--surface);
+  border-style: dashed;
+  margin-top: 1rem;
+}

@@ -1,0 +1,126 @@
+@use "@/styles/variables" as *;
+
+.todo-lists {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  &__smart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border-radius: $radius;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.88rem;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+    &--active {
+      background: rgb(var(--brand-rgb) / 0.12);
+      color: var(--brand);
+    }
+
+    &--list {
+      padding: 0;
+      gap: 0;
+      position: relative;
+    }
+  }
+
+  &__item-main {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex: 1;
+    min-width: 0;
+    padding: 0.55rem 0.7rem;
+    color: inherit;
+    font: inherit;
+  }
+
+  &__icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex-shrink: 0;
+    &--star {
+      color: var(--warning);
+    }
+  }
+
+  &__dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    flex: 1;
+    text-align: left;
+    @include line-clamp(1);
+  }
+
+  &__count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--surface-3);
+    padding: 1px 8px;
+    border-radius: $radius-pill;
+    flex-shrink: 0;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.7rem 0.2rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+
+  &__custom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__empty {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 0.5rem 0.7rem;
+    line-height: 1.4;
+  }
+
+  &__actions {
+    display: none;
+    align-items: center;
+    padding-right: 0.35rem;
+  }
+
+  &__item--list:hover .todo-lists__actions {
+    display: flex;
+  }
+  // Mantener visible en táctil
+  @include respond-down(md) {
+    &__actions {
+      display: flex;
+    }
+  }
+}

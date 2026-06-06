@@ -1,0 +1,118 @@
+@use "@/styles/variables" as *;
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+
+    @include respond-down(sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ─── Tags ───
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: $radius;
+    padding: 0.45rem 0.55rem;
+    min-height: 44px;
+
+    &:focus-within {
+      border-color: rgb(var(--brand-rgb) / 0.7);
+    }
+  }
+
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 4px 2px 9px;
+    border-radius: $radius-pill;
+    background: rgb(var(--brand-rgb) / 0.14);
+    color: var(--brand);
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    button {
+      display: inline-flex;
+      color: inherit;
+      opacity: 0.7;
+      &:hover {
+        opacity: 1;
+      }
+      svg {
+        width: 0.95rem;
+        height: 0.95rem;
+      }
+    }
+  }
+
+  &__tag-input {
+    flex: 1;
+    min-width: 60px;
+    background: transparent;
+    color: var(--text);
+    font-size: 0.85rem;
+    padding: 2px;
+  }
+
+  // ─── Subtasks ───
+  &__subtasks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__subtask {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: $radius-sm;
+    background: var(--surface-2);
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brand);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  }
+
+  &__subtask-grip {
+    color: var(--text-muted);
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  &__subtask-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    color: var(--text);
+    font-size: 0.88rem;
+    padding: 0.3rem 0;
+  }
+
+  &__subtask-add {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.2rem;
+
+    > :first-child {
+      flex: 1;
+    }
+  }
+}

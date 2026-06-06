@@ -1,0 +1,31 @@
+@use "@/styles/variables" as *;
+
+.fl-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+
+  &__mark {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-gradient);
+    border-radius: 28%;
+    box-shadow: 0 4px 14px rgb(var(--brand-rgb) / 0.45);
+
+    svg {
+      width: 72%;
+      height: 72%;
+      display: block;
+    }
+  }
+
+  &__word {
+    font-family: $font-display;
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+}

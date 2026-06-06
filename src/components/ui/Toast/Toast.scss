@@ -1,0 +1,54 @@
+@use "@/styles/variables" as *;
+
+.fl-toasts {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  pointer-events: none;
+
+  @include respond-down(md) {
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+  }
+}
+
+.fl-toast {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: $radius;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px var(--shadow);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 500;
+  min-width: 240px;
+  max-width: 380px;
+  pointer-events: auto;
+  animation: slideInRight 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  &__icon {
+    display: inline-flex;
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  &--success .fl-toast__icon {
+    color: var(--success);
+  }
+  &--error .fl-toast__icon {
+    color: var(--danger);
+  }
+  &--info .fl-toast__icon {
+    color: var(--info);
+  }
+}

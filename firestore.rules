@@ -1,0 +1,16 @@
+rules_version = '2';
+
+// Reglas de seguridad de Flowly.
+// Cada usuario solo puede leer/escribir sus propios datos bajo users/{uid}.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // Subcolecciones: routines, routineLogs, lists, tasks, events, etc.
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+  }
+}

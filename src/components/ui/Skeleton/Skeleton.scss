@@ -1,0 +1,8 @@
+@use "@/styles/variables" as *;
+
+.fl-sk {
+  @include shimmer;
+  display: block;
+  border-radius: $radius;
+  width: 100%;
+}

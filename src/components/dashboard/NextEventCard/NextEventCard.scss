@@ -1,0 +1,56 @@
+@use "@/styles/variables" as *;
+
+.next-event {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+  @include card-hover;
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius;
+    flex-shrink: 0;
+    color: var(--warning);
+    background: color-mix(in srgb, var(--warning) 14%, transparent);
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__name {
+    font-family: $font-display;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.2;
+    @include line-clamp(1);
+  }
+
+  &__countdown {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--warning);
+    margin-top: 2px;
+  }
+
+  &__label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+}

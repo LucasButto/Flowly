@@ -1,0 +1,29 @@
+@use "@/styles/variables" as *;
+
+.fl-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+
+  &__track {
+    flex: 1;
+    background: var(--surface-3);
+    border-radius: $radius-pill;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: $radius-pill;
+    transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  &__label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 2.5rem;
+    text-align: right;
+  }
+}

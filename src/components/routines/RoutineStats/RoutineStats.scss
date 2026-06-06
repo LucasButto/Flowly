@@ -1,0 +1,100 @@
+@use "@/styles/variables" as *;
+
+.rstats {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__daily {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    @include card;
+    padding: 1.5rem;
+  }
+
+  &__counts {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+
+  &__count {
+    flex: 1;
+    min-width: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 1rem;
+    border-radius: $radius;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+
+    &--done {
+      color: var(--success);
+    }
+    &--pending {
+      color: var(--text-secondary);
+    }
+    &--skipped {
+      color: var(--warning);
+    }
+  }
+
+  &__count-num {
+    font-family: $font-display;
+    font-size: 1.8rem;
+    font-weight: 800;
+  }
+
+  &__count-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  &__panel {
+    @include card;
+    padding: 1.5rem;
+  }
+
+  &__panel-title {
+    font-family: $font-display;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.rstats-chart {
+  &__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  &__grid {
+    stroke: var(--border);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+  }
+
+  &__labels {
+    position: relative;
+    height: 1rem;
+    margin-top: 0.4rem;
+
+    span {
+      position: absolute;
+      transform: translateX(-50%);
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+  }
+}

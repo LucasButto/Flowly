@@ -1,0 +1,163 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Variables NO cromáticas (los colores viven como CSS custom properties en
+// _theme.scss para poder cambiar entre tema claro/oscuro en runtime).
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─── Typography ───
+$font-body: "Inter", system-ui, -apple-system, sans-serif;
+$font-display: "Sora", "Inter", system-ui, sans-serif;
+$font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+// ─── Layout ───
+$sidebar-width: 250px;
+$sidebar-collapsed: 76px;
+$topbar-height: 58px;
+$bottombar-height: 64px;
+$page-padding: clamp(1rem, 3.5vw, 2.5rem);
+$content-max: 1320px;
+
+// ─── Radius ───
+$radius-sm: 8px;
+$radius: 12px;
+$radius-lg: 16px;
+$radius-xl: 22px;
+$radius-pill: 999px;
+
+// ─── Breakpoints ───
+$bp-sm: 480px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+$bp-xxl: 1536px;
+
+// ─── Mixins ───
+@mixin respond-up($bp) {
+  @if $bp == sm {
+    @media (min-width: $bp-sm) { @content; }
+  } @else if $bp == md {
+    @media (min-width: $bp-md) { @content; }
+  } @else if $bp == lg {
+    @media (min-width: $bp-lg) { @content; }
+  } @else if $bp == xl {
+    @media (min-width: $bp-xl) { @content; }
+  } @else if $bp == xxl {
+    @media (min-width: $bp-xxl) { @content; }
+  }
+}
+
+@mixin respond-down($bp) {
+  @if $bp == sm {
+    @media (max-width: ($bp-sm - 1px)) { @content; }
+  } @else if $bp == md {
+    @media (max-width: ($bp-md - 1px)) { @content; }
+  } @else if $bp == lg {
+    @media (max-width: ($bp-lg - 1px)) { @content; }
+  } @else if $bp == xl {
+    @media (max-width: ($bp-xl - 1px)) { @content; }
+  }
+}
+
+@mixin card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+}
+
+@mixin card-hover {
+  transition:
+    transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+    box-shadow: 0 10px 30px var(--shadow);
+  }
+}
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid rgb(var(--brand-rgb));
+    outline-offset: 2px;
+  }
+}
+
+@mixin line-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@mixin glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border);
+}
+
+@mixin scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--surface-3);
+    border-radius: $radius-pill;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@mixin scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@mixin shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+// ─── Keyframes ───
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}

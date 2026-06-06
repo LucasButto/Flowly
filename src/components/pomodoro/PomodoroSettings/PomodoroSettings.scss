@@ -1,0 +1,95 @@
+@use "@/styles/variables" as *;
+
+.pomo-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__block {
+    @include card;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  &__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: $radius-pill;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    transition: all 0.15s ease;
+
+    &:hover {
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    &--active {
+      background: rgb(var(--brand-rgb) / 0.14);
+      border-color: rgb(var(--brand-rgb) / 0.5);
+      color: var(--brand);
+    }
+
+    &--custom {
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+
+  &__chip-label {
+    padding: 0.4rem 0.3rem 0.4rem 0.85rem;
+    color: inherit;
+    font: inherit;
+  }
+
+  &__chip-del {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    align-self: stretch;
+    color: var(--text-muted);
+    &:hover {
+      color: var(--danger);
+      background: rgb(var(--danger-rgb) / 0.12);
+    }
+    svg {
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+  }
+
+  &__custom {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+
+    @include respond-down(sm) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__modal {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+}

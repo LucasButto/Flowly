@@ -1,0 +1,30 @@
+@use "./variables" as *;
+
+.skeleton {
+  @include shimmer;
+  border-radius: $radius;
+  display: block;
+}
+
+.skeleton--text {
+  height: 0.8rem;
+  border-radius: $radius-pill;
+  margin: 0.35rem 0;
+}
+
+.skeleton--title {
+  height: 1.4rem;
+  width: 40%;
+  border-radius: $radius-sm;
+}
+
+.skeleton--card {
+  height: 120px;
+  border-radius: $radius-lg;
+}
+
+.skeleton--avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}

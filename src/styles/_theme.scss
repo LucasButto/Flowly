@@ -1,0 +1,77 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Tokens de color como CSS custom properties.
+// Los colores semánticos (brand/success/...) se exponen en formato de canales
+// "R G B" para poder componer alpha con rgb(var(--x-rgb) / 0.15).
+// ─────────────────────────────────────────────────────────────────────────────
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0e1014;
+  --bg-elevated: #161922;
+  --surface: #1a1e28;
+  --surface-2: #222732;
+  --surface-3: #2c3340;
+  --surface-hover: #262c39;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text: #eef1f6;
+  --text-secondary: #a7b0c0;
+  --text-muted: #6b7488;
+
+  --shadow: rgba(0, 0, 0, 0.45);
+  --glass-bg: rgba(20, 24, 33, 0.72);
+
+  --skeleton-base: #1c212c;
+  --skeleton-highlight: #28303d;
+
+  --on-brand: #ffffff;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f3f5fa;
+  --bg-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f4f9;
+  --surface-3: #e5e9f1;
+  --surface-hover: #f6f8fc;
+
+  --border: rgba(15, 23, 42, 0.09);
+  --border-strong: rgba(15, 23, 42, 0.18);
+
+  --text: #151a23;
+  --text-secondary: #4b5468;
+  --text-muted: #8b94a6;
+
+  --shadow: rgba(15, 23, 42, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.78);
+
+  --skeleton-base: #e6eaf2;
+  --skeleton-highlight: #f1f4f9;
+
+  --on-brand: #ffffff;
+}
+
+// Semánticos — iguales en ambos temas
+:root {
+  --brand-rgb: 99 102 241; // indigo #6366f1
+  --brand-2-rgb: 139 92 246; // violet #8b5cf6
+  --success-rgb: 34 197 94; // #22c55e
+  --warning-rgb: 245 158 11; // #f59e0b
+  --danger-rgb: 239 68 68; // #ef4444
+  --info-rgb: 56 189 248; // #38bdf8
+
+  --brand: rgb(var(--brand-rgb));
+  --brand-2: rgb(var(--brand-2-rgb));
+  --success: rgb(var(--success-rgb));
+  --warning: rgb(var(--warning-rgb));
+  --danger: rgb(var(--danger-rgb));
+  --info: rgb(var(--info-rgb));
+
+  --brand-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+}

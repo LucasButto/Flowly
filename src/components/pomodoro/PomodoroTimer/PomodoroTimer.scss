@@ -1,0 +1,43 @@
+@use "@/styles/variables" as *;
+
+.pomo-timer {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 2.5rem 1.5rem;
+
+  &__name {
+    padding: 0.3rem 0.9rem;
+    border-radius: $radius-pill;
+    background: rgb(var(--brand-rgb) / 0.14);
+    color: var(--brand);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  &__phase {
+    font-family: $font-display;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  &__link {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    text-align: center;
+
+    strong {
+      color: var(--text);
+    }
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+}

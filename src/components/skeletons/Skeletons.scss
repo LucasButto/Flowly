@@ -1,0 +1,109 @@
+@use "@/styles/variables" as *;
+
+.sk-page {
+  max-width: $content-max;
+  margin: 0 auto;
+  padding: $page-padding;
+  animation: fadeIn 0.2s ease;
+}
+
+.sk-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 200px;
+    max-width: 420px;
+  }
+}
+
+.sk-mb {
+  margin-bottom: 1.4rem;
+}
+
+.sk-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+
+  &--week {
+    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  }
+}
+
+.sk-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+
+  @include respond-down(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sk-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.sk-routines {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 1.25rem;
+  align-items: start;
+
+  @include respond-down(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sk-todo {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+
+  @include respond-down(md) {
+    grid-template-columns: 1fr;
+  }
+
+  &__side {
+    @include respond-down(md) {
+      height: 120px !important;
+    }
+  }
+}
+
+.sk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
+}
+
+.sk-pomo {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  @include respond-down(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sk-settings {
+  max-width: 680px;
+}

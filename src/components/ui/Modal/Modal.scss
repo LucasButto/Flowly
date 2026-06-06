@@ -1,0 +1,87 @@
+@use "@/styles/variables" as *;
+
+.fl-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
+  }
+
+  &__card {
+    position: relative;
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: $radius-lg;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    max-height: calc(100dvh - 2rem);
+    display: flex;
+    flex-direction: column;
+    animation: scaleIn 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    &--sm {
+      max-width: 420px;
+    }
+    &--md {
+      max-width: 560px;
+    }
+    &--lg {
+      max-width: 760px;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.35rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-sm;
+    color: var(--text-secondary);
+    transition: background 0.16s ease, color 0.16s ease;
+    &:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+  }
+
+  &__body {
+    padding: 1.35rem;
+    overflow-y: auto;
+    @include scrollbar-thin;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    padding: 1rem 1.35rem;
+    border-top: 1px solid var(--border);
+  }
+}

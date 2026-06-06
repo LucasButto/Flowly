@@ -1,0 +1,16 @@
+@use "@/styles/variables" as *;
+
+.fl-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  border-radius: $radius-lg;
+  font-family: $font-mono;
+  font-size: clamp(1.4rem, 3.5vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}

@@ -1,0 +1,90 @@
+@use "@/styles/variables" as *;
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+
+    @include respond-down(sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__allday {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 40px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+
+  &__conflict {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+
+    svg {
+      color: var(--warning);
+      flex-shrink: 0;
+    }
+  }
+
+  // Tags (igual que en TaskForm)
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: $radius;
+    padding: 0.45rem 0.55rem;
+    min-height: 44px;
+
+    &:focus-within {
+      border-color: rgb(var(--brand-rgb) / 0.7);
+    }
+  }
+
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 4px 2px 9px;
+    border-radius: $radius-pill;
+    background: rgb(var(--brand-rgb) / 0.14);
+    color: var(--brand);
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    button {
+      display: inline-flex;
+      color: inherit;
+      opacity: 0.7;
+      &:hover {
+        opacity: 1;
+      }
+      svg {
+        width: 0.95rem;
+        height: 0.95rem;
+      }
+    }
+  }
+
+  &__tag-input {
+    flex: 1;
+    min-width: 60px;
+    background: transparent;
+    color: var(--text);
+    font-size: 0.85rem;
+    padding: 2px;
+  }
+}
