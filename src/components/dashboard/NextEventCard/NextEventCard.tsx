@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/navigation";
 import EventRoundedIcon from "@mui/icons-material/EventRounded";
 import { parseDateKey, todayKey } from "@/utils/dates";
 import type { FlowEvent } from "@/types/event";
@@ -9,9 +10,10 @@ import "./NextEventCard.scss";
 interface NextEventCardProps {
   event: FlowEvent | null;
   date: string | null; // fecha de la ocurrencia más próxima
+  href?: string;
 }
 
-export default function NextEventCard({ event, date }: NextEventCardProps) {
+export default function NextEventCard({ event, date, href }: NextEventCardProps) {
   const t = useTranslations("dashboard");
   const tc = useTranslations("common");
   const [now, setNow] = useState(() => Date.now());
@@ -60,8 +62,8 @@ export default function NextEventCard({ event, date }: NextEventCardProps) {
     }
   }
 
-  return (
-    <div className="next-event">
+  const inner = (
+    <>
       <span className="next-event__icon">
         <EventRoundedIcon />
       </span>
@@ -73,6 +75,16 @@ export default function NextEventCard({ event, date }: NextEventCardProps) {
           <span className="next-event__label">{t("upcomingEvents")}</span>
         )}
       </div>
-    </div>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="next-event next-event--link">
+        {inner}
+      </Link>
+    );
+  }
+  return <div className="next-event">{inner}</div>;
 }
+

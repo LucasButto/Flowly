@@ -144,22 +144,26 @@ export default function DashboardPage() {
             value={pendingCount}
             label={t("routinesPending")}
             accent="var(--info)"
+            href="/routines"
           />
           <StatCard
             icon={<CheckCircleRoundedIcon />}
             value={completedCount}
             label={t("routinesCompleted")}
             accent="var(--success)"
+            href="/routines"
           />
           <StatCard
             icon={<ChecklistRoundedIcon />}
             value={pendingTasks.length}
             label={t("tasksPending")}
             accent="var(--brand)"
+            href="/todo"
           />
           <NextEventCard
             event={nextEvent?.event ?? null}
             date={nextEvent?.date ?? null}
+            href="/events"
           />
         </div>
       </section>
