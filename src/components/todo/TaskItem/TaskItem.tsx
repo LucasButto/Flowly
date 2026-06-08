@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useTodo } from "@/contexts/TodoContext";
@@ -33,6 +33,7 @@ export default function TaskItem({
   const t = useTranslations("todo");
   const tc = useTranslations("common");
   const ts = useTranslations("status");
+  const locale = useLocale();
   const { toggleComplete, toggleFavorite, editTask } = useTodo();
   const [expanded, setExpanded] = useState(false);
 
@@ -101,11 +102,15 @@ export default function TaskItem({
                 }`}
               >
                 <EventRoundedIcon />
-                {formatRelativeDay(task.dueDate, {
-                  today: tc("today"),
-                  yesterday: tc("yesterday"),
-                  tomorrow: tc("tomorrow"),
-                })}
+                {formatRelativeDay(
+                  task.dueDate,
+                  {
+                    today: tc("today"),
+                    yesterday: tc("yesterday"),
+                    tomorrow: tc("tomorrow"),
+                  },
+                  locale,
+                )}
               </span>
             )}
             {totalSubs > 0 && (

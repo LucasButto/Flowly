@@ -26,7 +26,9 @@
   &__date {
     color: var(--text-secondary);
     margin-top: 0.3rem;
-    text-transform: capitalize;
+    // Sin transform: Intl ya pone el caso correcto según idioma
+    // (es: "lunes, 8 de junio" · en: "Monday, June 8")
+    text-transform: none;
   }
 
   &__section {

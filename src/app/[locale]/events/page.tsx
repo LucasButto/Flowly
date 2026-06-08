@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useEvents } from "@/contexts/EventsContext";
 import { useToast } from "@/components/ui/Toast/ToastProvider";
 import {
@@ -37,6 +37,7 @@ type View = "day" | "week" | "month" | "year";
 export default function EventsPage() {
   const t = useTranslations("events");
   const tc = useTranslations("common");
+  const locale = useLocale();
   const toast = useToast();
   const {
     events,
@@ -117,21 +118,22 @@ export default function EventsPage() {
   const title = useMemo(() => {
     if (view === "year") return String(cursor.getFullYear());
     if (view === "day")
-      return formatDate(cursor, {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-      });
+      return formatDate(
+        cursor,
+        { weekday: "long", day: "numeric", month: "long" },
+        locale,
+      );
     if (view === "week") {
       const ws = startOfWeek(cursor);
       const we = addDays(ws, 6);
-      return `${formatDate(ws, { day: "numeric", month: "short" })} – ${formatDate(
+      return `${formatDate(ws, { day: "numeric", month: "short" }, locale)} – ${formatDate(
         we,
         { day: "numeric", month: "short", year: "numeric" },
+        locale,
       )}`;
     }
-    return `${formatDate(cursor, { month: "long" })} ${cursor.getFullYear()}`;
-  }, [view, cursor]);
+    return `${formatDate(cursor, { month: "long" }, locale)} ${cursor.getFullYear()}`;
+  }, [view, cursor, locale]);
 
   const openNew = (date?: string) => {
     setEditing(null);
@@ -326,11 +328,11 @@ export default function EventsPage() {
         {detail && (
           <div className="events__detail">
             <p className="events__detail-when">
-              {formatDate(parseDateKey(detailDate ?? detail.date), {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })}
+              {formatDate(
+                parseDateKey(detailDate ?? detail.date),
+                { weekday: "long", day: "numeric", month: "long" },
+                locale,
+              )}
               {detail.startTime
                 ? ` · ${detail.startTime}${detail.endTime ? "–" + detail.endTime : ""}`
                 : ` · ${t("allDay")}`}
@@ -362,11 +364,11 @@ export default function EventsPage() {
         onClose={() => setDayModal(null)}
         title={
           dayModal
-            ? formatDate(parseDateKey(dayModal), {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })
+            ? formatDate(
+                parseDateKey(dayModal),
+                { weekday: "long", day: "numeric", month: "long" },
+                locale,
+              )
             : ""
         }
         size="sm"

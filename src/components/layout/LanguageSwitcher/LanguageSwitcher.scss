@@ -1,0 +1,37 @@
+@use "@/styles/variables" as *;
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: $radius-pill;
+  padding: 3px 3px 3px 0;
+
+  &__icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--text-muted);
+    margin: 0 0.15rem 0 0.5rem;
+    flex-shrink: 0;
+  }
+
+  &__opt {
+    padding: 0.25rem 0.65rem;
+    border-radius: $radius-pill;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      color: var(--text);
+    }
+
+    &--active {
+      background: var(--brand);
+      color: var(--on-brand);
+    }
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, KeyboardEvent } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useEvents } from "@/contexts/EventsContext";
 import { eventConflicts } from "@/utils/events";
 import {
@@ -53,6 +53,7 @@ export default function EventForm({
 }: EventFormProps) {
   const t = useTranslations("events");
   const tc = useTranslations("common");
+  const locale = useLocale();
   const { events, addEvent, editEvent } = useEvents();
 
   const [title, setTitle] = useState("");
@@ -221,10 +222,7 @@ export default function EventForm({
   const formTitle = isEdit
     ? t("edit")
     : date
-      ? `${t("new")} - ${formatDate(parseDateKey(date), {
-          day: "numeric",
-          month: "long",
-        })}`
+      ? `${t("new")} - ${formatDate(parseDateKey(date), { day: "numeric", month: "long" }, locale)}`
       : t("new");
 
   return (

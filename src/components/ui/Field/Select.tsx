@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import "./Field.scss";
 
@@ -53,6 +54,7 @@ export default function Select({
   className = "",
   placeholder,
 }: SelectProps) {
+  const tc = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [pos, setPos] = useState<{
@@ -190,13 +192,13 @@ export default function Select({
                   autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Buscar…"
+                  placeholder={tc("searchPlaceholder")}
                 />
               </div>
             )}
             <ul className="fl-dd__options">
               {filtered.length === 0 && (
-                <li className="fl-dd__empty">Sin resultados</li>
+                <li className="fl-dd__empty">{tc("noResults")}</li>
               )}
               {filtered.map((o) => (
                 <li

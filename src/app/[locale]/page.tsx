@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoutines } from "@/contexts/RoutinesContext";
@@ -34,6 +34,7 @@ import "./dashboard.scss";
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
   const tt = useTranslations("todo");
+  const locale = useLocale();
   const { user } = useAuth();
   const { routines, getStatus, loaded: routinesLoaded } = useRoutines();
   const { tasks, loaded: todoLoaded, removeTask } = useTodo();
@@ -126,11 +127,11 @@ export default function DashboardPage() {
           {firstName && <span> {firstName}</span>}
         </h1>
         <p className="dashboard__date">
-          {formatDate(today, {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-          })}
+          {formatDate(
+            today,
+            { weekday: "long", day: "numeric", month: "long" },
+            locale,
+          )}
         </p>
         <Clock />
       </header>

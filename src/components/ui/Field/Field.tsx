@@ -1,5 +1,6 @@
 "use client";
 import { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import "./Field.scss";
 
 interface FieldProps {
@@ -19,12 +20,15 @@ export default function Field({
   optional,
   children,
 }: FieldProps) {
+  const tc = useTranslations("common");
   return (
     <div className={`fl-field ${error ? "fl-field--error" : ""}`}>
       {label && (
         <label className="fl-field__label" htmlFor={htmlFor}>
           {label}
-          {optional && <span className="fl-field__optional">opcional</span>}
+          {optional && (
+            <span className="fl-field__optional">{tc("optional")}</span>
+          )}
         </label>
       )}
       {children}

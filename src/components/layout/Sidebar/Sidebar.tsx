@@ -4,6 +4,7 @@ import { Link, usePathname, useRouter } from "@/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/contexts/AuthContext";
 import Brand from "@/components/layout/Brand/Brand";
+import LanguageSwitcher from "@/components/layout/LanguageSwitcher/LanguageSwitcher";
 import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
 import AutorenewRoundedIcon from "@mui/icons-material/AutorenewRounded";
 import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
@@ -121,6 +122,10 @@ export default function Sidebar() {
             </Link>
           ))}
         </nav>
+
+        <div className="fl-sidebar__lang">
+          <LanguageSwitcher />
+        </div>
 
         <div className="fl-sidebar__footer">
           <Link href="/settings" className="fl-sidebar__profile" onClick={close}>

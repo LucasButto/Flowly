@@ -231,7 +231,8 @@ export default function TodoPage() {
                     </div>
                     <p className="todo__list-count">
                       {t("tasksCount", { count: listTasks.length })}
-                      {pending > 0 && ` · ${pending} pendientes`}
+                      {pending > 0 &&
+                        ` · ${t("pendingCount", { count: pending })}`}
                     </p>
                     <ProgressBar value={pct} color="var(--list)" height={6} />
                   </button>

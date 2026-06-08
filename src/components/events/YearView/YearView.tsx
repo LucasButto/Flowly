@@ -1,6 +1,6 @@
 "use client";
 import { useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { occurrencesInRange } from "@/utils/events";
 import {
   startOfWeek,
@@ -28,6 +28,7 @@ export default function YearView({
   onSelectMonth,
 }: YearViewProps) {
   const td = useTranslations("days");
+  const locale = useLocale();
   const year = monthDate.getFullYear();
   const today = todayKey();
 
@@ -65,7 +66,7 @@ export default function YearView({
             className="year-view__month-name"
             onClick={() => onSelectMonth(new Date(year, m, 1))}
           >
-            {formatDate(new Date(year, m, 1), { month: "long" })}
+            {formatDate(new Date(year, m, 1), { month: "long" }, locale)}
           </button>
 
           <div className="year-view__weekdays">
