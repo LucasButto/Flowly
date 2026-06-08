@@ -33,6 +33,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import type { Task, TaskStatus, TodoList } from "@/types/todo";
 import "./todo.scss";
@@ -258,6 +259,21 @@ export default function TodoPage() {
                   <ArrowBackRoundedIcon />
                   <h2 className="todo__heading">{heading}</h2>
                 </button>
+                {isRealList && (
+                  <IconButton
+                    label={t("editList")}
+                    size="sm"
+                    onClick={() => {
+                      const l = lists.find((x) => x.id === selected);
+                      if (l) {
+                        setEditingList(l);
+                        setListFormOpen(true);
+                      }
+                    }}
+                  >
+                    <EditRoundedIcon />
+                  </IconButton>
+                )}
                 <div className="todo__search">
                   <SearchRoundedIcon />
                   <input

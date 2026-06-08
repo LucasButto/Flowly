@@ -14,9 +14,16 @@ interface ListFormProps {
   open: boolean;
   list?: TodoList | null;
   onClose: () => void;
+  /** Se llama con el id de la lista recién creada (solo en modo crear). */
+  onCreated?: (id: string) => void;
 }
 
-export default function ListForm({ open, list, onClose }: ListFormProps) {
+export default function ListForm({
+  open,
+  list,
+  onClose,
+  onCreated,
+}: ListFormProps) {
   const t = useTranslations("todo");
   const tc = useTranslations("common");
   const { addList, editList } = useTodo();
@@ -40,9 +47,14 @@ export default function ListForm({ open, list, onClose }: ListFormProps) {
     }
     setSaving(true);
     try {
-      if (list) await editList(list.id, { name: name.trim(), color });
-      else await addList({ name: name.trim(), color });
-      onClose();
+      if (list) {
+        await editList(list.id, { name: name.trim(), color });
+        onClose();
+      } else {
+        const id = await addList({ name: name.trim(), color });
+        onClose();
+        if (id && onCreated) onCreated(id);
+      }
     } catch {
       /* toast en contexto */
     } finally {

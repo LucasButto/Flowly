@@ -9,12 +9,15 @@ import TextInput from "@/components/ui/Field/TextInput";
 import TextArea from "@/components/ui/Field/TextArea";
 import Select from "@/components/ui/Field/Select";
 import IconButton from "@/components/ui/IconButton/IconButton";
+import ListForm from "@/components/todo/ListForm/ListForm";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
 import type { Task, Subtask } from "@/types/todo";
 import { newId } from "@/utils/ids";
 import "./TaskForm.scss";
+
+const NEW_LIST = "__new_list__";
 
 interface TaskFormProps {
   open: boolean;
@@ -41,6 +44,7 @@ export default function TaskForm({
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
   const [subDraft, setSubDraft] = useState("");
   const [listId, setListId] = useState("");
+  const [listFormOpen, setListFormOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -51,6 +55,7 @@ export default function TaskForm({
     setError(null);
     setTagDraft("");
     setSubDraft("");
+    setListFormOpen(false);
     if (task) {
       setTitle(task.title);
       setDescription(task.description);
@@ -66,7 +71,10 @@ export default function TaskForm({
       setSubtasks([]);
       setListId(defaultListId ?? lists[0]?.id ?? "");
     }
-  }, [open, task, defaultListId, lists]);
+    // No incluir `lists`: si cambia (p. ej. al crear una lista desde acá) no
+    // queremos resetear el formulario en progreso.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, task, defaultListId]);
 
   const addTag = () => {
     const v = tagDraft.trim().toLowerCase();
@@ -154,13 +162,23 @@ export default function TaskForm({
 
         <div className="task-form__row">
           <Field label={t("lists")}>
-            <Select value={listId} onChange={(v) => setListId(v)}>
+            <Select
+              value={listId}
+              onChange={(v) => {
+                if (v === NEW_LIST) {
+                  setListFormOpen(true);
+                  return;
+                }
+                setListId(v);
+              }}
+            >
               {lists.length === 0 && <option value="">—</option>}
               {lists.map((l) => (
                 <option key={l.id} value={l.id}>
                   {l.name}
                 </option>
               ))}
+              <option value={NEW_LIST}>+ {t("newList")}</option>
             </Select>
           </Field>
           <Field label={t("dueDate")} optional>
@@ -259,6 +277,16 @@ export default function TaskForm({
           </div>
         </Field>
       </div>
+
+      {/* Crear lista nueva desde el form de tarea */}
+      <ListForm
+        open={listFormOpen}
+        onClose={() => setListFormOpen(false)}
+        onCreated={(id) => {
+          setListId(id);
+          setListFormOpen(false);
+        }}
+      />
     </Modal>
   );
 }

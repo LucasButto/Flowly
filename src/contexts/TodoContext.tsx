@@ -26,7 +26,7 @@ interface TodoContextType {
   lists: TodoList[];
   tasks: Task[];
   loaded: boolean;
-  addList: (input: TodoListInput) => Promise<void>;
+  addList: (input: TodoListInput) => Promise<string | undefined>;
   editList: (id: string, patch: Partial<TodoList>) => Promise<void>;
   removeList: (id: string) => Promise<void>;
   addTask: (input: TaskInput) => Promise<void>;
@@ -91,10 +91,11 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   }, [isLoggedIn, user?.uid, toast]);
 
   const addList = useCallback(
-    async (input: TodoListInput) => {
-      if (!user?.uid) return;
+    async (input: TodoListInput): Promise<string | undefined> => {
+      if (!user?.uid) return undefined;
       try {
-        await createList(user.uid, input, lists.length);
+        const ref = await createList(user.uid, input, lists.length);
+        return ref.id;
       } catch (err) {
         console.error(err);
         toast("No se pudo crear la lista", "error");
