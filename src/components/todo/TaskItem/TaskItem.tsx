@@ -128,14 +128,6 @@ export default function TaskItem({
         </button>
 
         <div className="task-item__tools">
-          <IconButton
-            label={task.favorite ? t("unfavorite") : t("favorite")}
-            size="sm"
-            onClick={() => toggleFavorite(task)}
-            className={task.favorite ? "task-item__fav--on" : ""}
-          >
-            {task.favorite ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
-          </IconButton>
           {totalSubs > 0 && (
             <IconButton
               label="Subtareas"
@@ -149,10 +141,14 @@ export default function TaskItem({
             </IconButton>
           )}
           <IconButton
-            label={tc("edit")}
+            label={task.favorite ? t("unfavorite") : t("favorite")}
             size="sm"
-            onClick={() => onEdit(task)}
+            onClick={() => toggleFavorite(task)}
+            className={task.favorite ? "task-item__fav--on" : ""}
           >
+            {task.favorite ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
+          </IconButton>
+          <IconButton label={tc("edit")} size="sm" onClick={() => onEdit(task)}>
             <EditRoundedIcon />
           </IconButton>
           <IconButton
