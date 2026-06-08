@@ -186,6 +186,7 @@ export default function DashboardPage() {
                   key={r.id}
                   routine={r}
                   mode="today"
+                  openHref="/routines"
                   onEdit={() => {}}
                   onDelete={() => {}}
                 />

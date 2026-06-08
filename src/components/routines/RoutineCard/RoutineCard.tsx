@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
+import { Link } from "@/navigation";
 import { useRoutines } from "@/contexts/RoutinesContext";
 import IconButton from "@/components/ui/IconButton/IconButton";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
@@ -7,6 +8,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartmentRounded";
 import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
 import { todayKey } from "@/utils/dates";
@@ -20,6 +22,8 @@ interface RoutineCardProps {
   mode: "today" | "all";
   /** Muestra el lápiz de editar en modo "today" (no en el dashboard). */
   showEdit?: boolean;
+  /** Si está, muestra un botón para abrir la sección de rutinas. */
+  openHref?: string;
   onEdit: (r: Routine) => void;
   onDelete: (r: Routine) => void;
 }
@@ -28,6 +32,7 @@ export default function RoutineCard({
   routine,
   mode,
   showEdit = false,
+  openHref,
   onEdit,
   onDelete,
 }: RoutineCardProps) {
@@ -70,15 +75,29 @@ export default function RoutineCard({
             </div>
           </div>
 
-          {(mode === "all" || (mode === "today" && showEdit)) && (
+          {(mode === "all" ||
+            (mode === "today" && showEdit) ||
+            openHref) && (
             <div className="routine-card__tools">
-              <IconButton
-                label={tc("edit")}
-                size="sm"
-                onClick={() => onEdit(routine)}
-              >
-                <EditRoundedIcon />
-              </IconButton>
+              {openHref && (
+                <Link
+                  href={openHref}
+                  className="fl-iconbtn fl-iconbtn--sm fl-iconbtn--ghost"
+                  aria-label={t("open")}
+                  title={t("open")}
+                >
+                  <OpenInNewRoundedIcon />
+                </Link>
+              )}
+              {(mode === "all" || (mode === "today" && showEdit)) && (
+                <IconButton
+                  label={tc("edit")}
+                  size="sm"
+                  onClick={() => onEdit(routine)}
+                >
+                  <EditRoundedIcon />
+                </IconButton>
+              )}
               {mode === "all" && (
                 <IconButton
                   label={tc("delete")}
