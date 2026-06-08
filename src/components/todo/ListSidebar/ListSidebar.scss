@@ -94,7 +94,6 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-muted);
-    margin-top: 0.5rem;
     @include respond-down(md) {
       display: none;
     }
