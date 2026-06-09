@@ -20,6 +20,8 @@ import "./RoutineCard.scss";
 interface RoutineCardProps {
   routine: Routine;
   mode: "today" | "all";
+  /** Fecha (YYYY-MM-DD) sobre la que se marca el estado. Default: hoy. */
+  date?: string;
   /** Muestra el lápiz de editar en modo "today" (no en el dashboard). */
   showEdit?: boolean;
   /** Si está, muestra un botón para abrir la sección de rutinas. */
@@ -31,6 +33,7 @@ interface RoutineCardProps {
 export default function RoutineCard({
   routine,
   mode,
+  date,
   showEdit = false,
   openHref,
   onEdit,
@@ -43,7 +46,7 @@ export default function RoutineCard({
   const ts = useTranslations("status");
   const { getStatus, setStatus, statsOf } = useRoutines();
 
-  const key = todayKey();
+  const key = date ?? todayKey();
   const status = getStatus(routine.id, key);
   const stats = statsOf(routine);
 

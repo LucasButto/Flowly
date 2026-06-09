@@ -1,0 +1,88 @@
+@use "@/styles/variables" as *;
+
+.mini-cal {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: 17rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+  box-shadow: 0 14px 40px var(--shadow);
+
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  &__month {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+    text-transform: capitalize;
+  }
+
+  &__weekdays,
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  &__weekday {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding-bottom: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  &__day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    transition:
+      background 0.12s ease,
+      color 0.12s ease;
+
+    &:hover {
+      background: var(--surface-2);
+    }
+
+    &--muted {
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    &--today {
+      color: var(--brand);
+      border: 1px solid var(--brand);
+      font-weight: 800;
+    }
+
+    &--selected {
+      background: var(--brand);
+      color: #fff;
+      &:hover {
+        background: var(--brand);
+      }
+    }
+  }
+}

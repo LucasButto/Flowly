@@ -142,6 +142,7 @@
     "fieldDescPlaceholder": "Add a note or detail (optional)",
     "today": "For today",
     "todayEmpty": "No routines scheduled for today.",
+    "dayEmpty": "No routines scheduled for this day.",
     "all": "All",
     "markCompleted": "Complete",
     "markSkipped": "Skip",

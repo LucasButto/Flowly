@@ -142,6 +142,7 @@
     "fieldDescPlaceholder": "Agregá una nota o detalle (opcional)",
     "today": "Para hoy",
     "todayEmpty": "No hay rutinas programadas para hoy.",
+    "dayEmpty": "No hay rutinas programadas para este día.",
     "all": "Todas",
     "markCompleted": "Completar",
     "markSkipped": "Omitir",
