@@ -2,7 +2,8 @@
 
 App web para organizar **hábitos, rutinas, tareas, eventos y notas** en un solo lugar.
 
-> Tu día, en flow.
+> [!NOTE]
+> Puedes visualizar una version de este proyecto en [flowly-habits](https://flowly-habits.vercel.app/).
 
 ## Stack
 
