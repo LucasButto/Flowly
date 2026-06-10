@@ -1,0 +1,103 @@
+@use "@/styles/variables" as *;
+
+// Vista read-only de bloques. El acento toma var(--accent) del contenedor
+// (cards de notas) y cae a var(--brand) si no está definido.
+.blocks-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  word-break: break-word;
+
+  &__h1 {
+    font-family: $font-display;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  &__h2 {
+    font-family: $font-display;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  &__li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+
+  &__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent, var(--brand));
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  &__num {
+    font-weight: 700;
+    color: var(--accent, var(--brand));
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    margin-top: 1px;
+  }
+
+  &__check {
+    width: 16px;
+    height: 16px;
+    border-radius: 5px;
+    border: 2px solid var(--border-strong);
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.15s ease;
+
+    &:not(:disabled):hover {
+      border-color: var(--success);
+    }
+    &--on {
+      background: var(--success);
+      border-color: var(--success);
+      position: relative;
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 1px 3px 4px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+  }
+
+  &__text--done {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+
+  &__quote {
+    border-left: 3px solid var(--accent, var(--brand));
+    padding-left: 0.6rem;
+    font-style: italic;
+  }
+
+  &__hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0.25rem 0;
+  }
+
+  &__link {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+}

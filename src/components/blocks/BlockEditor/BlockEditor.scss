@@ -1,0 +1,193 @@
+@use "@/styles/variables" as *;
+
+.block-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  &__blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+    padding: 1px 0;
+    border-radius: $radius-sm;
+  }
+
+  &__grip,
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 26px;
+    flex-shrink: 0;
+    border-radius: $radius-sm;
+    color: var(--text-muted);
+    transition:
+      color 0.12s ease,
+      background 0.12s ease,
+      opacity 0.12s ease;
+
+    svg {
+      width: 1.05rem;
+      height: 1.05rem;
+    }
+  }
+
+  &__grip {
+    cursor: grab;
+    opacity: 0.45;
+    &:active {
+      cursor: grabbing;
+    }
+    .block-editor__row:hover & {
+      opacity: 1;
+    }
+  }
+
+  // Siempre visible: borrar un bloque tiene que ser obvio
+  &__remove {
+    opacity: 0.55;
+
+    &:hover {
+      opacity: 1;
+      color: var(--danger);
+      background: rgb(var(--danger-rgb) / 0.12);
+    }
+
+    .block-editor__row:hover & {
+      opacity: 1;
+    }
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 0;
+    resize: none;
+    overflow: hidden;
+    background: transparent;
+    color: var(--text);
+    font-size: 0.92rem;
+    line-height: 1.45;
+    padding: 2px 0;
+
+    &::placeholder {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    &--done {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+  }
+
+  // ─── Estilos por tipo de bloque ───
+  &__row--h1 .block-editor__input {
+    font-family: $font-display;
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  &__row--h2 .block-editor__input {
+    font-family: $font-display;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  &__row--quote .block-editor__input {
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  &__bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent, var(--brand));
+    flex-shrink: 0;
+    margin-top: 11px;
+  }
+
+  &__num {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--accent, var(--brand));
+    flex-shrink: 0;
+    margin-top: 3px;
+    min-width: 1.1rem;
+    text-align: right;
+  }
+
+  &__check {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 2px solid var(--border-strong);
+    flex-shrink: 0;
+    margin-top: 4px;
+    transition: all 0.15s ease;
+
+    &:hover {
+      border-color: var(--success);
+    }
+    &--on {
+      background: var(--success);
+      border-color: var(--success);
+      position: relative;
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 2px 4px 5px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+  }
+
+  &__quote-bar {
+    width: 3px;
+    align-self: stretch;
+    border-radius: 2px;
+    background: var(--accent, var(--brand));
+    flex-shrink: 0;
+  }
+
+  &__divider {
+    flex: 1;
+    border: none;
+    border-top: 1px solid var(--border-strong);
+    margin: 0.6rem 0;
+  }
+
+  // ─── Toolbar para agregar bloques ───
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  &__toolbar-label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-right: 0.3rem;
+  }
+
+  &__toolbar-sep {
+    width: 1px;
+    height: 1.1rem;
+    background: var(--border-strong);
+    margin: 0 0.35rem;
+  }
+}

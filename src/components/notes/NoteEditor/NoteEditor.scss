@@ -1,0 +1,53 @@
+@use "@/styles/variables" as *;
+
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  &__title {
+    width: 100%;
+    background: transparent;
+    color: var(--text);
+    font-family: $font-display;
+    font-size: 1.25rem;
+    font-weight: 800;
+    padding: 0.2rem 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s ease;
+
+    &::placeholder {
+      color: var(--text-muted);
+    }
+    &:focus {
+      border-bottom-color: var(--accent, var(--brand));
+    }
+  }
+
+  // ─── Footer del modal ───
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  &__footer-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__footer-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  &__pin--on {
+    color: var(--brand);
+  }
+}

@@ -12,6 +12,7 @@ import { RoutinesProvider } from "@/contexts/RoutinesContext";
 import { TodoProvider } from "@/contexts/TodoContext";
 import { EventsProvider } from "@/contexts/EventsContext";
 import { PomodoroProvider } from "@/contexts/PomodoroContext";
+import { NotesProvider } from "@/contexts/NotesContext";
 import { ToastProvider } from "@/components/ui/Toast/ToastProvider";
 import LoginGate from "@/components/auth/LoginGate/LoginGate";
 
@@ -65,7 +66,9 @@ export default async function LocaleLayout({
                   <TodoProvider>
                     <EventsProvider>
                       <PomodoroProvider>
-                        <LoginGate>{children}</LoginGate>
+                        <NotesProvider>
+                          <LoginGate>{children}</LoginGate>
+                        </NotesProvider>
                       </PomodoroProvider>
                     </EventsProvider>
                   </TodoProvider>
