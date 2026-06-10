@@ -15,6 +15,18 @@
     }
   }
 
+  // Descripción con bloques: contenedor con aspecto de input
+  &__desc {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: $radius;
+    padding: 0.55rem 0.7rem;
+
+    &:focus-within {
+      border-color: rgb(var(--brand-rgb) / 0.7);
+    }
+  }
+
   // ─── Tags ───
   &__tags {
     display: flex;

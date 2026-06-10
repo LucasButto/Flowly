@@ -8,10 +8,64 @@
   border: 1px solid var(--border);
   border-radius: $radius-lg;
   overflow: hidden;
-  transition: border-color 0.2s ease, opacity 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    opacity 0.2s ease;
 
   &:hover {
     border-color: var(--border-strong);
+  }
+
+  // ─── Pausada: contenido gris, pero las herramientas (reanudar) a pleno ───
+  &--paused {
+    .routine-card__bar,
+    .routine-card__title,
+    .routine-card__meta,
+    .routine-card__desc,
+    .routine-card__daypills,
+    .routine-card__stats,
+    .routine-card__actions {
+      opacity: 0.62;
+      filter: saturate(0.15);
+    }
+  }
+
+  // Botón de reanudar bien visible/clickeable sobre la card apagada
+  &__resume.fl-iconbtn {
+    background: rgb(var(--brand-rgb) / 0.16);
+    color: var(--brand);
+
+    &:hover {
+      background: rgb(var(--brand-rgb) / 0.3);
+    }
+  }
+
+  &__paused-chip {
+    color: var(--text-muted) !important;
+    border-style: dashed !important;
+  }
+
+  &__paused-state {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem;
+    border-radius: $radius;
+    border: 1px dashed var(--border-strong);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+
+    svg {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
+
+  &__resume {
+    color: var(--brand);
   }
 
   &__bar {
@@ -150,6 +204,7 @@
   // ─── Acciones de hoy ───
   &__actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 

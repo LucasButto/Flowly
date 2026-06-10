@@ -9,6 +9,7 @@ import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded
 import AutorenewRoundedIcon from "@mui/icons-material/AutorenewRounded";
 import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
+import StickyNote2RoundedIcon from "@mui/icons-material/StickyNote2Rounded";
 import TimerRoundedIcon from "@mui/icons-material/TimerRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
@@ -35,6 +36,7 @@ export default function Sidebar() {
     { href: "/routines", label: t("routines"), icon: <AutorenewRoundedIcon /> },
     { href: "/todo", label: t("todo"), icon: <ChecklistRoundedIcon /> },
     { href: "/events", label: t("events"), icon: <CalendarMonthRoundedIcon /> },
+    { href: "/notes", label: t("notes"), icon: <StickyNote2RoundedIcon /> },
     { href: "/pomodoro", label: t("pomodoro"), icon: <TimerRoundedIcon /> },
     { href: "/settings", label: t("settings"), icon: <SettingsRoundedIcon /> },
   ];

@@ -10,6 +10,20 @@ $gutter: 56px;
   max-height: calc(100dvh - 220px);
   min-height: 420px;
 
+  // Vista semana en mobile: scroll horizontal con columnas legibles
+  &--multi {
+    @include respond-down(md) {
+      overflow-x: auto;
+      @include scrollbar-thin;
+
+      .time-grid__header,
+      .time-grid__allday,
+      .time-grid__scroll {
+        min-width: calc(#{$gutter} + var(--day-cols) * 88px);
+      }
+    }
+  }
+
   &__header {
     display: grid;
     grid-template-columns: $gutter repeat(var(--cols, 1), 1fr);

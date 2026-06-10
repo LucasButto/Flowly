@@ -7,16 +7,30 @@
   transform: translateX(-50%);
   z-index: 50;
   width: 17rem;
+  max-width: calc(100vw - 2rem);
   padding: 0.75rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: $radius-lg;
   box-shadow: 0 14px 40px var(--shadow);
 
+  // En mobile: centrado en viewport (tipo modal) para que no se corte
+  @include respond-down(md) {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(19rem, calc(100vw - 2rem));
+  }
+
   &__backdrop {
     position: fixed;
     inset: 0;
     z-index: 40;
+
+    @include respond-down(md) {
+      background: var(--shadow);
+    }
   }
 
   &__head {
@@ -27,10 +41,15 @@
   }
 
   &__month {
+    display: inline-block;
     font-weight: 700;
     font-size: 0.9rem;
     color: var(--text);
-    text-transform: capitalize;
+
+    // Solo la primera letra ("Junio de 2026", no "Junio De 2026")
+    &::first-letter {
+      text-transform: uppercase;
+    }
   }
 
   &__weekdays,

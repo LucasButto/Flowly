@@ -21,8 +21,10 @@ import {
 } from "@/services/routines";
 import {
   computeRoutineStats,
+  isRoutineActive,
   type StatusLookup,
 } from "@/utils/routineStats";
+import { todayKey } from "@/utils/dates";
 import type {
   Routine,
   RoutineInput,
@@ -45,6 +47,8 @@ interface RoutinesContextType {
     date: string,
     status: RoutineStatus,
   ) => Promise<void>;
+  /** Pausa o reanuda una rutina (los días pausados no afectan rachas). */
+  toggleActive: (routine: Routine) => Promise<void>;
 }
 
 const RoutinesContext = createContext<RoutinesContextType | null>(null);
@@ -175,6 +179,33 @@ export function RoutinesProvider({ children }: { children: ReactNode }) {
     [user?.uid, toast],
   );
 
+  const toggleActive = useCallback(
+    async (routine: Routine) => {
+      if (!user?.uid) return;
+      const today = todayKey();
+      const pauses = routine.pauses ?? [];
+      try {
+        if (isRoutineActive(routine)) {
+          // Pausar: abre un rango de pausa desde hoy
+          await updateRoutine(user.uid, routine.id, {
+            active: false,
+            pauses: [...pauses, { from: today, to: null }],
+          });
+        } else {
+          // Reanudar: cierra la pausa abierta (hoy vuelve a contar)
+          await updateRoutine(user.uid, routine.id, {
+            active: true,
+            pauses: pauses.map((p) => (p.to === null ? { ...p, to: today } : p)),
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        toast("No se pudo actualizar la rutina", "error");
+      }
+    },
+    [user?.uid, toast],
+  );
+
   return (
     <RoutinesContext.Provider
       value={{
@@ -187,6 +218,7 @@ export function RoutinesProvider({ children }: { children: ReactNode }) {
         editRoutine,
         removeRoutine,
         setStatus,
+        toggleActive,
       }}
     >
       {children}

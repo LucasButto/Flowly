@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useTodo } from "@/contexts/TodoContext";
 import IconButton from "@/components/ui/IconButton/IconButton";
+import BlockContent from "@/components/blocks/BlockContent/BlockContent";
 import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
@@ -13,8 +14,11 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import EventRoundedIcon from "@mui/icons-material/EventRounded";
 import CheckListRoundedIcon from "@mui/icons-material/ChecklistRounded";
+import NotesRoundedIcon from "@mui/icons-material/NotesRounded";
 import { formatRelativeDay, todayKey } from "@/utils/dates";
+import { textToBlocks } from "@/utils/blocks";
 import type { Task } from "@/types/todo";
+import type { NoteBlock } from "@/types/blocks";
 import "./TaskItem.scss";
 
 interface TaskItemProps {
@@ -35,7 +39,13 @@ export default function TaskItem({
   const ts = useTranslations("status");
   const locale = useLocale();
   const { toggleComplete, toggleFavorite, editTask } = useTodo();
-  const [expanded, setExpanded] = useState(false);
+  // Con descripción, el detalle arranca abierto (limitado en altura)
+  const [expanded, setExpanded] = useState(
+    () => Boolean(task.descriptionBlocks?.length) || Boolean(task.description),
+  );
+  const [descFull, setDescFull] = useState(false);
+  const [descOverflow, setDescOverflow] = useState(false);
+  const descRef = useRef<HTMLDivElement>(null);
 
   const {
     attributes,
@@ -58,10 +68,38 @@ export default function TaskItem({
   const overdue =
     !completed && task.dueDate && task.dueDate < todayKey() ? true : false;
 
+  // Bloques de descripción (tareas viejas: texto plano → bloques al vuelo)
+  const descBlocks: NoteBlock[] = useMemo(
+    () =>
+      task.descriptionBlocks?.length
+        ? task.descriptionBlocks
+        : textToBlocks(task.description),
+    [task.descriptionBlocks, task.description],
+  );
+  const hasDesc = descBlocks.length > 0;
+  const expandable = totalSubs > 0 || hasDesc;
+
+  // ¿La descripción desborda la altura máxima? → mostrar "…" y "Ver más"
+  useEffect(() => {
+    if (!expanded || !hasDesc) return;
+    const el = descRef.current;
+    if (el) setDescOverflow(el.scrollHeight > el.clientHeight + 1);
+  }, [expanded, hasDesc, descFull, descBlocks]);
+
   const toggleSub = (subId: string) => {
     editTask(task.id, {
       subtasks: task.subtasks.map((s) =>
         s.id === subId ? { ...s, done: !s.done } : s,
+      ),
+    });
+  };
+
+  // Marcar checklists de la descripción (solo tareas con bloques persistidos)
+  const toggleDescCheck = (block: NoteBlock) => {
+    if (!task.descriptionBlocks?.length) return;
+    void editTask(task.id, {
+      descriptionBlocks: task.descriptionBlocks.map((b) =>
+        b.id === block.id ? { ...b, checked: !b.checked } : b,
       ),
     });
   };
@@ -119,6 +157,11 @@ export default function TaskItem({
                 {doneSubs}/{totalSubs}
               </span>
             )}
+            {hasDesc && (
+              <span className="task-item__subs">
+                <NotesRoundedIcon />
+              </span>
+            )}
             {task.tags.map((tag) => (
               <span key={tag} className="task-item__tag">
                 #{tag}
@@ -128,9 +171,9 @@ export default function TaskItem({
         </button>
 
         <div className="task-item__tools">
-          {totalSubs > 0 && (
+          {expandable && (
             <IconButton
-              label="Subtareas"
+              label={t("expand")}
               size="sm"
               onClick={() => setExpanded((e) => !e)}
               className={`task-item__expand ${
@@ -161,6 +204,33 @@ export default function TaskItem({
           </IconButton>
         </div>
       </div>
+
+      {expanded && hasDesc && (
+        <div className="task-item__desc">
+          <div
+            ref={descRef}
+            className={`task-item__desc-clamp ${
+              descFull ? "task-item__desc-clamp--open" : ""
+            }`}
+          >
+            <BlockContent
+              blocks={descBlocks}
+              onToggleCheck={
+                task.descriptionBlocks?.length ? toggleDescCheck : undefined
+              }
+            />
+          </div>
+          {(descOverflow || descFull) && (
+            <button
+              type="button"
+              className="task-item__desc-more"
+              onClick={() => setDescFull((f) => !f)}
+            >
+              {descFull ? t("seeLess") : t("seeMore")}
+            </button>
+          )}
+        </div>
+      )}
 
       {expanded && totalSubs > 0 && (
         <ul className="task-item__subtasks">

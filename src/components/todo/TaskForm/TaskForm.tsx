@@ -6,15 +6,22 @@ import Modal from "@/components/ui/Modal/Modal";
 import Button from "@/components/ui/Button/Button";
 import Field from "@/components/ui/Field/Field";
 import TextInput from "@/components/ui/Field/TextInput";
-import TextArea from "@/components/ui/Field/TextArea";
 import Select from "@/components/ui/Field/Select";
 import IconButton from "@/components/ui/IconButton/IconButton";
 import ListForm from "@/components/todo/ListForm/ListForm";
+import BlockEditor from "@/components/blocks/BlockEditor/BlockEditor";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
 import type { Task, Subtask } from "@/types/todo";
+import type { NoteBlock } from "@/types/blocks";
 import { newId } from "@/utils/ids";
+import {
+  newBlock,
+  cleanBlocks,
+  blocksToPlainText,
+  textToBlocks,
+} from "@/utils/blocks";
 import "./TaskForm.scss";
 
 const NEW_LIST = "__new_list__";
@@ -37,7 +44,7 @@ export default function TaskForm({
   const { lists, addTask, editTask } = useTodo();
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [descBlocks, setDescBlocks] = useState<NoteBlock[]>([newBlock()]);
   const [dueDate, setDueDate] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagDraft, setTagDraft] = useState("");
@@ -58,14 +65,21 @@ export default function TaskForm({
     setListFormOpen(false);
     if (task) {
       setTitle(task.title);
-      setDescription(task.description);
+      // Migración: tareas viejas tienen descripción de texto plano
+      setDescBlocks(
+        task.descriptionBlocks?.length
+          ? task.descriptionBlocks.map((b) => ({ ...b }))
+          : task.description
+            ? textToBlocks(task.description)
+            : [newBlock()],
+      );
       setDueDate(task.dueDate ?? "");
       setTags(task.tags);
       setSubtasks(task.subtasks);
       setListId(task.listId);
     } else {
       setTitle("");
-      setDescription("");
+      setDescBlocks([newBlock()]);
       setDueDate("");
       setTags([]);
       setSubtasks([]);
@@ -108,10 +122,12 @@ export default function TaskForm({
     }
     setSaving(true);
     try {
+      const blocksClean = cleanBlocks(descBlocks);
       const payload = {
         listId,
         title: title.trim(),
-        description: description.trim(),
+        description: blocksToPlainText(blocksClean),
+        descriptionBlocks: blocksClean,
         dueDate: dueDate || null,
         tags,
         subtasks,
@@ -154,10 +170,9 @@ export default function TaskForm({
         </Field>
 
         <Field label={tc("description")} optional>
-          <TextArea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
+          <div className="task-form__desc">
+            <BlockEditor value={descBlocks} onChange={setDescBlocks} />
+          </div>
         </Field>
 
         <div className="task-form__row">

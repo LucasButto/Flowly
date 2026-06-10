@@ -53,6 +53,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+
+    @include respond-down(sm) {
+      flex-wrap: wrap;
+    }
   }
 
   &__row-label {

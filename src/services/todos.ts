@@ -77,6 +77,7 @@ export async function createTask(uid: string, input: TaskInput, order: number) {
   return addDoc(tasksCol(uid), {
     title: input.title,
     description: input.description ?? "",
+    descriptionBlocks: input.descriptionBlocks ?? [],
     listId: input.listId,
     status: input.status ?? "pending",
     dueDate: input.dueDate ?? null,

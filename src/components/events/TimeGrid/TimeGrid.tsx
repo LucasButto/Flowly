@@ -53,7 +53,7 @@ export default function TimeGrid({
 
   return (
     <div
-      className="time-grid"
+      className={`time-grid ${days.length > 1 ? "time-grid--multi" : ""}`}
       style={{ "--day-cols": days.length } as React.CSSProperties}
     >
       {/* Header con días */}

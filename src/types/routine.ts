@@ -4,6 +4,12 @@ export type RoutineFrequency = "daily" | "weekdays" | "custom";
 
 export type RoutineStatus = "pending" | "completed" | "skipped";
 
+/** Rango de pausa [from, to): `to` es el día de reactivación (null = sigue pausada). */
+export interface RoutinePause {
+  from: string; // "YYYY-MM-DD"
+  to: string | null;
+}
+
 export interface Routine {
   id: string;
   name: string;
@@ -14,6 +20,10 @@ export interface Routine {
   tag: string;
   description: string;
   color: string; // hex
+  /** false = pausada (vacaciones, etc.). Ausente = activa. */
+  active?: boolean;
+  /** Historial de pausas: esos días no cuentan para rachas ni agregados. */
+  pauses?: RoutinePause[];
   createdAt: number;
   updatedAt: number;
 }

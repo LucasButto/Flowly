@@ -11,7 +11,10 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartmentRounded";
 import ScheduleRoundedIcon from "@mui/icons-material/ScheduleRounded";
+import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { todayKey } from "@/utils/dates";
+import { isRoutineActive, isRoutinePausedOn } from "@/utils/routineStats";
 import { contrastText } from "@/utils/colors";
 import { DAY_KEYS, WEEK_ORDER } from "@/types/common";
 import type { Routine } from "@/types/routine";
@@ -44,11 +47,16 @@ export default function RoutineCard({
   const td = useTranslations("days");
   const tf = useTranslations("frequency");
   const ts = useTranslations("status");
-  const { getStatus, setStatus, statsOf } = useRoutines();
+  const { getStatus, setStatus, statsOf, toggleActive } = useRoutines();
 
   const key = date ?? todayKey();
   const status = getStatus(routine.id, key);
   const stats = statsOf(routine);
+
+  const active = isRoutineActive(routine);
+  // Pausada para el día mostrado (las fechas previas a la pausa siguen normales)
+  const pausedOnDay = isRoutinePausedOn(routine, key);
+  const dimmed = mode === "today" ? pausedOnDay : !active;
 
   const daysLabel = () => {
     if (routine.frequency === "daily") return tf("daily");
@@ -60,7 +68,9 @@ export default function RoutineCard({
 
   return (
     <article
-      className={`routine-card routine-card--${status}`}
+      className={`routine-card routine-card--${status} ${
+        dimmed ? "routine-card--paused" : ""
+      }`}
       style={{ "--accent": routine.color } as React.CSSProperties}
     >
       <span className="routine-card__bar" />
@@ -75,6 +85,11 @@ export default function RoutineCard({
                 {routine.startTime}–{routine.endTime}
               </span>
               {routine.tag && <span className="chip">{routine.tag}</span>}
+              {!active && (
+                <span className="chip routine-card__paused-chip">
+                  {t("paused")}
+                </span>
+              )}
             </div>
           </div>
 
@@ -82,7 +97,7 @@ export default function RoutineCard({
             (mode === "today" && showEdit) ||
             openHref) && (
             <div className="routine-card__tools">
-              {openHref && (
+              {openHref && !pausedOnDay && (
                 <Link
                   href={openHref}
                   className="fl-iconbtn fl-iconbtn--sm fl-iconbtn--ghost"
@@ -92,7 +107,23 @@ export default function RoutineCard({
                   <OpenInNewRoundedIcon />
                 </Link>
               )}
-              {(mode === "all" || (mode === "today" && showEdit)) && (
+              {/* Pausar/reanudar: único botón interactivo si está pausada en "hoy" */}
+              {(mode === "all" ||
+                (mode === "today" && showEdit) ||
+                (openHref && pausedOnDay)) && (
+                <IconButton
+                  label={active ? t("pause") : t("resume")}
+                  size="sm"
+                  onClick={() => toggleActive(routine)}
+                  className={
+                    !active ? "routine-card__resume" : undefined
+                  }
+                >
+                  {active ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />}
+                </IconButton>
+              )}
+              {(mode === "all" ||
+                (mode === "today" && showEdit && !pausedOnDay)) && (
                 <IconButton
                   label={tc("edit")}
                   size="sm"
@@ -167,7 +198,11 @@ export default function RoutineCard({
 
         {mode === "today" && (
           <div className="routine-card__actions">
-            {status === "pending" ? (
+            {pausedOnDay ? (
+              <span className="routine-card__paused-state">
+                <PauseRoundedIcon /> {t("paused")}
+              </span>
+            ) : status === "pending" ? (
               <>
                 <button
                   className="routine-card__btn routine-card__btn--complete"

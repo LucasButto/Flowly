@@ -8,6 +8,21 @@ export function routineRunsOn(routine: Routine, date: Date): boolean {
   return routine.days.includes(getWeekday(date));
 }
 
+/** ¿La rutina está activa hoy? (ausencia del campo = activa) */
+export function isRoutineActive(routine: Routine): boolean {
+  return routine.active !== false;
+}
+
+/**
+ * ¿La rutina estaba pausada en ese día? Los días pausados no cuentan
+ * como programados ni rompen rachas.
+ */
+export function isRoutinePausedOn(routine: Routine, key: string): boolean {
+  return (routine.pauses ?? []).some(
+    (p) => p.from <= key && (p.to === null || key < p.to),
+  );
+}
+
 function startDate(routine: Routine): Date {
   const d = new Date(routine.createdAt);
   d.setHours(0, 0, 0, 0);
@@ -35,6 +50,7 @@ export function computeRoutineStats(
   for (let d = startDate(routine); d <= end; d = addDays(d, 1)) {
     if (!routineRunsOn(routine, d)) continue;
     const key = dateKey(d);
+    if (isRoutinePausedOn(routine, key)) continue; // pausada: el día no existe
     const status = getStatus(routine.id, key);
     occ.push({ key, status });
 
@@ -103,6 +119,7 @@ export function dayAggregate(
   for (const r of routines) {
     if (!routineRunsOn(r, date)) continue;
     if (created(r) > target) continue; // no existía aún ese día
+    if (isRoutinePausedOn(r, key)) continue; // pausada: no cuenta ese día
     scheduled++;
     const s = getStatus(r.id, key);
     if (s === "completed") completed++;

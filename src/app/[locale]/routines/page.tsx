@@ -69,7 +69,7 @@ export default function RoutinesPage() {
       ? tc("yesterday")
       : formatDate(
           selectedDate,
-          { weekday: "long", day: "numeric", month: "long" },
+          { weekday: "short", day: "numeric", month: "long" },
           locale,
         );
 
@@ -159,14 +159,6 @@ export default function RoutinesPage() {
                 />
               )}
             </div>
-            <IconButton
-              label="→"
-              size="sm"
-              variant="default"
-              onClick={() => shiftDay(1)}
-            >
-              <ChevronRightRoundedIcon />
-            </IconButton>
             {!isToday && (
               <Button
                 size="sm"
@@ -176,6 +168,14 @@ export default function RoutinesPage() {
                 {tc("today")}
               </Button>
             )}
+            <IconButton
+              label="→"
+              size="sm"
+              variant="default"
+              onClick={() => shiftDay(1)}
+            >
+              <ChevronRightRoundedIcon />
+            </IconButton>
           </div>
 
           {dayRoutines.length === 0 ? (
@@ -205,7 +205,7 @@ export default function RoutinesPage() {
                   />
                   <div className="routines__ring-counts">
                     <span>
-                      <strong>{dayAgg.completed}</strong>/{dayAgg.scheduled}{" "}
+                      {dayAgg.completed} / {dayAgg.scheduled}{" "}
                       {t("completedCount").toLowerCase()}
                     </span>
                   </div>

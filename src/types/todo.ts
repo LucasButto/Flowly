@@ -1,3 +1,5 @@
+import type { NoteBlock } from "./blocks";
+
 export type TaskStatus = "pending" | "completed";
 
 export interface TodoList {
@@ -20,7 +22,10 @@ export interface Task {
   id: string;
   listId: string;
   title: string;
+  /** Texto plano de la descripción (búsqueda / compatibilidad). */
   description: string;
+  /** Descripción enriquecida por bloques (tareas viejas no lo tienen). */
+  descriptionBlocks?: NoteBlock[];
   status: TaskStatus;
   dueDate: string | null; // "YYYY-MM-DD"
   tags: string[];

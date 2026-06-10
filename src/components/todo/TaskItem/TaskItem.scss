@@ -172,6 +172,92 @@
     transform: rotate(180deg);
   }
 
+  // ─── Descripción expandida (bloques) ───
+  &__desc {
+    padding: 0 0.85rem 0.75rem 3rem;
+
+    @include respond-down(sm) {
+      padding-left: 0.85rem;
+    }
+
+    .blocks-view {
+      font-size: 0.84rem;
+    }
+
+    // Links discretos: el violeta de marca solo al hover
+    .blocks-view__link {
+      color: var(--text-secondary);
+      text-decoration-color: var(--border-strong);
+
+      &:hover {
+        opacity: 1;
+        color: var(--brand);
+        text-decoration-color: currentColor;
+      }
+    }
+  }
+
+  // line-clamp nativo: el "…" aparece justo donde se corta el texto
+  &__desc-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    overflow: hidden;
+    // Red de seguridad holgada por si el clamp no engancha en algún navegador
+    max-height: 13rem;
+
+    // line-clamp no cuenta líneas dentro de contenedores flex: mientras está
+    // recortado, los bloques y los ítems de lista fluyen como block/inline
+    &:not(.task-item__desc-clamp--open) {
+      .blocks-view {
+        display: block;
+
+        > * + * {
+          margin-top: 0.3rem;
+        }
+      }
+
+      .blocks-view__li {
+        display: block;
+      }
+
+      .blocks-view__dot {
+        display: inline-block;
+        margin: 0 0.45rem 2px 0;
+        vertical-align: middle;
+      }
+
+      .blocks-view__num {
+        margin: 0 0.3rem 0 0;
+      }
+
+      .blocks-view__check {
+        display: inline-flex;
+        vertical-align: -3px;
+        margin: 0 0.45rem 0 0;
+      }
+    }
+
+    &--open {
+      display: block;
+      -webkit-line-clamp: unset;
+      line-clamp: unset;
+      max-height: none;
+    }
+  }
+
+  &__desc-more {
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--brand);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   // ─── Subtasks expandidas ───
   &__subtasks {
     display: flex;

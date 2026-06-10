@@ -113,6 +113,20 @@ export function PomodoroSkeleton() {
   );
 }
 
+export function NotesSkeleton() {
+  return (
+    <div className="sk-page">
+      <HeaderSk />
+      <Skeleton width={340} height={40} radius={12} className="sk-mb" />
+      <div className="sk-notes">
+        {[150, 210, 120, 180, 140, 200, 160, 130].map((h, i) => (
+          <Skeleton key={i} height={h} radius={16} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function SettingsSkeleton() {
   return (
     <div className="sk-page">
