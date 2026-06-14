@@ -74,6 +74,23 @@
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+
+    .blocks-view__p,
+    .blocks-view__h1,
+    .blocks-view__h2,
+    .blocks-view__quote,
+    .blocks-view__li > span:last-child {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      line-clamp: 4;
+      overflow: hidden;
+    }
+
+    .blocks-view__li > span:last-child {
+      flex: 1;
+      min-width: 0;
+    }
   }
 
   &__more {

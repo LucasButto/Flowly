@@ -11,7 +11,7 @@ import { formatDate } from "@/utils/dates";
 import type { Note, NoteBlock } from "@/types/note";
 import "./NoteCard.scss";
 
-const MAX_PREVIEW_BLOCKS = 8;
+const MAX_PREVIEW_BLOCKS = 5;
 
 interface NoteCardProps {
   note: Note;
