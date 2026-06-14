@@ -8,6 +8,8 @@ export interface TodoList {
   color: string;
   order: number;
   createdAt: number;
+  /** Si se muestran las tareas completadas en esta lista. Por defecto sí. */
+  showCompleted?: boolean;
 }
 
 export type TodoListInput = Omit<TodoList, "id" | "order" | "createdAt">;

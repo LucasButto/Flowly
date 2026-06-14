@@ -1,6 +1,6 @@
 {
   "name": "flowly",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
@@ -17,7 +17,7 @@
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",
     "firebase": "^12.11.0",
-    "next": "16.2.1",
+    "next": "^16.2.9",
     "next-intl": "^4.8.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",

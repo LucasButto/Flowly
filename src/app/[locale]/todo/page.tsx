@@ -45,7 +45,8 @@ export default function TodoPage() {
   const t = useTranslations("todo");
   const tc = useTranslations("common");
   const tst = useTranslations("status");
-  const { lists, tasks, loaded, removeTask, removeList, reorder } = useTodo();
+  const { lists, tasks, loaded, editList, removeTask, removeList, reorder } =
+    useTodo();
 
   // "all" = vista resumen de listas; o "favorites" | "history" | listId
   const [selected, setSelected] = useState<string>("all");
@@ -53,7 +54,9 @@ export default function TodoPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   // Las tareas completadas quedan visibles (tachadas) por defecto; el usuario
   // las borra con el tacho. El toggle permite ocultarlas si quiere.
-  const [showCompleted, setShowCompleted] = useState(true);
+  // En listas reales el estado se persiste por lista en Firestore; la vista
+  // "favoritos" no es una lista real, así que usa este estado local.
+  const [favShowCompleted, setFavShowCompleted] = useState(true);
 
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -79,6 +82,13 @@ export default function TodoPage() {
 
   const isOverview = selected === "all";
   const isRealList = !SMART.includes(selected);
+  const currentList = isRealList
+    ? lists.find((l) => l.id === selected)
+    : undefined;
+  // Visibles por defecto mientras no se haya guardado lo contrario.
+  const showCompleted = isRealList
+    ? (currentList?.showCompleted ?? true)
+    : favShowCompleted;
   const filtersActive = !!search || statusFilter !== "all";
   const dndEnabled = isRealList && !filtersActive;
 
@@ -294,7 +304,11 @@ export default function TodoPage() {
                   <label className="todo__toggle">
                     <Switch
                       checked={showCompleted}
-                      onChange={setShowCompleted}
+                      onChange={(v) => {
+                        if (isRealList && currentList)
+                          editList(currentList.id, { showCompleted: v });
+                        else setFavShowCompleted(v);
+                      }}
                     />
                     <span>{t("showCompleted")}</span>
                   </label>
