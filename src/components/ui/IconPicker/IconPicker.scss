@@ -1,17 +1,132 @@
 @use "@/styles/variables" as *;
 
+// ─── Botón disparador (compacto, dentro del form) ───
+.fl-iconpicker-trigger {
+  display: inline-flex;
+  align-self: flex-start; // no estirarse a todo el ancho del Field
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: $radius;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+  @include focus-ring;
+
+  &:hover {
+    background: var(--surface-3);
+    border-color: var(--border-strong);
+  }
+
+  &__icon {
+    display: inline-flex;
+    color: var(--text-muted);
+
+    svg {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+  }
+
+  &__label {
+    @include line-clamp(1);
+  }
+
+  &__caret {
+    color: var(--text-muted);
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+  }
+}
+
+// ─── Popup de selección (portaleado a body, encima del form) ───
+.fl-iconpicker-pop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100; // por encima del Modal del formulario (1000)
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(3px);
+    animation: fadeIn 0.18s ease;
+  }
+
+  &__panel {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: $radius-lg;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    animation: scaleIn 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow: hidden;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: $radius-sm;
+    color: var(--text-secondary);
+    transition: background 0.16s ease, color 0.16s ease;
+
+    svg {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    &:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+  }
+
+  // La grilla scrollea dentro del popup, que tiene más alto que en el form
+  .fl-iconpicker {
+    max-height: 300px;
+    padding: 0.9rem 1rem;
+  }
+}
+
+// ─── Grilla de iconos (reusada dentro del popup) ───
 .fl-iconpicker {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  max-height: 188px;
   overflow-y: auto;
-  padding: 0.15rem;
   @include scrollbar-thin;
 
   &__btn {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     border-radius: $radius;
     display: inline-flex;
     align-items: center;
@@ -28,8 +143,8 @@
     @include focus-ring;
 
     svg {
-      width: 1.2rem;
-      height: 1.2rem;
+      width: 1.3rem;
+      height: 1.3rem;
     }
 
     &:hover {
