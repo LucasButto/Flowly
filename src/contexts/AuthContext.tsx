@@ -23,6 +23,17 @@ import { auth, db } from "@/firebase/config";
 const AUTH_COOKIE = "flowly_auth";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 14; // 14 días
 
+const DEV_FAKE_AUTH =
+  process.env.NODE_ENV !== "production" &&
+  process.env.NEXT_PUBLIC_DEV_FAKE_AUTH === "1";
+
+const FAKE_USER: UserData = {
+  uid: "dev-user",
+  email: "dev@flowly.local",
+  displayName: "Dev",
+  photoURL: null,
+};
+
 function setAuthCookie() {
   document.cookie = `${AUTH_COOKIE}=1; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
 }
@@ -70,6 +81,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // if (DEV_FAKE_AUTH) {
+    //   console.warn(
+    //     "[Flowly] DEV_FAKE_AUTH activo: sesión simulada, sin Google. Solo dev.",
+    //   );
+    //   setUser(FAKE_USER);
+    //   setLoading(false);
+    //   return;
+    // }
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         const data: UserData = {
