@@ -119,6 +119,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
         await createNote(user.uid, {
           title: note.title,
           color: note.color,
+          icon: note.icon ?? "",
           pinned: false,
           blocks: note.blocks.map((b) => ({ ...b })),
         });

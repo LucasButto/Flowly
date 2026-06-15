@@ -110,6 +110,9 @@ $gutter: 56px;
   }
 
   &__allday-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     text-align: left;
     font-size: 0.72rem;
     font-weight: 600;
@@ -117,6 +120,18 @@ $gutter: 56px;
     border-radius: 5px;
     background: color-mix(in srgb, var(--ev) 18%, transparent);
     border-left: 3px solid var(--ev);
+    min-width: 0;
+  }
+
+  // Selector escopeado al padre para ganarle a la clase de MUI (.MuiSvgIcon-root)
+  &__allday-chip &__chip-icon {
+    width: 0.85rem;
+    height: 0.85rem;
+    flex-shrink: 0;
+    color: var(--ev);
+  }
+
+  &__chip-text {
     @include line-clamp(1);
   }
 
@@ -201,9 +216,23 @@ $gutter: 56px;
   }
 
   &__event-title {
+    display: flex;
+    align-items: center;
+    gap: 3px;
     font-size: 0.74rem;
     font-weight: 700;
     color: var(--text);
+    min-width: 0;
+  }
+
+  &__event-title &__event-icon {
+    width: 0.8rem;
+    height: 0.8rem;
+    flex-shrink: 0;
+    color: var(--ev);
+  }
+
+  &__event-text {
     @include line-clamp(1);
   }
 

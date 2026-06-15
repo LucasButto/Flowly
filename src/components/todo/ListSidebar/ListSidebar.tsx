@@ -8,6 +8,7 @@ import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import FlowIcon from "@/utils/icons";
 import type { TodoList } from "@/types/todo";
 import "./ListSidebar.scss";
 
@@ -96,10 +97,18 @@ export default function ListSidebar({
                 className="todo-lists__item-main"
                 onClick={() => onSelect(l.id)}
               >
-                <span
-                  className="todo-lists__dot"
-                  style={{ background: l.color }}
-                />
+                {l.icon ? (
+                  <FlowIcon
+                    name={l.icon}
+                    className="todo-lists__list-icon"
+                    style={{ color: l.color }}
+                  />
+                ) : (
+                  <span
+                    className="todo-lists__dot"
+                    style={{ background: l.color }}
+                  />
+                )}
                 <span className="todo-lists__name">{l.name}</span>
                 {count > 0 && (
                   <span className="todo-lists__count">{count}</span>

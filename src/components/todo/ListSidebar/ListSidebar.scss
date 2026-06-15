@@ -68,6 +68,13 @@
     flex-shrink: 0;
   }
 
+  // Selector escopeado al padre para ganarle a la clase de MUI (.MuiSvgIcon-root)
+  &__item-main &__list-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+
   &__name {
     flex: 1;
     text-align: left;

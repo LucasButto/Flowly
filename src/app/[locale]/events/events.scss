@@ -68,18 +68,40 @@
     }
   }
 
+  // Selector escopeado al padre para ganarle a la clase de MUI (.MuiSvgIcon-root)
+  &__day-item &__day-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  &__day-title {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    @include line-clamp(1);
+  }
+
   &__day-time {
     font-family: $font-mono;
     font-size: 0.78rem;
     color: var(--text-secondary);
     flex-shrink: 0;
-    min-width: 3rem;
+    text-align: right;
   }
 
-  &__day-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-    @include line-clamp(1);
+  &__detail-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  &__detail-title &__detail-icon {
+    flex-shrink: 0;
+    width: 1.3rem;
+    height: 1.3rem;
   }
 
   &__detail {

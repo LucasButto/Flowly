@@ -32,6 +32,19 @@
     margin: -0.3rem -0.5rem -0.45rem 0;
   }
 
+  &__title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  &__title-row &__icon {
+    flex-shrink: 0;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 1px;
+  }
+
   &__title {
     font-family: $font-display;
     font-size: 1rem;

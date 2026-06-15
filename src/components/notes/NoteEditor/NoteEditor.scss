@@ -24,6 +24,18 @@
     }
   }
 
+  &__icons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__icons-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
   // ─── Footer del modal ───
   &__footer {
     display: flex;

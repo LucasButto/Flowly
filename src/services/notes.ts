@@ -31,6 +31,7 @@ export async function createNote(uid: string, input: NoteInput) {
   return addDoc(notesCol(uid), {
     title: input.title,
     color: input.color,
+    icon: input.icon ?? "",
     pinned: input.pinned ?? false,
     blocks: input.blocks ?? [],
     createdAt: now,

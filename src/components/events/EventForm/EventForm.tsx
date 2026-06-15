@@ -17,6 +17,7 @@ import TextArea from "@/components/ui/Field/TextArea";
 import Select from "@/components/ui/Field/Select";
 import Switch from "@/components/ui/Switch/Switch";
 import ColorPicker from "@/components/ui/ColorPicker/ColorPicker";
+import IconPicker from "@/components/ui/IconPicker/IconPicker";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { DEFAULT_COLOR } from "@/utils/colors";
@@ -66,6 +67,7 @@ export default function EventForm({
   const [tags, setTags] = useState<string[]>([]);
   const [tagDraft, setTagDraft] = useState("");
   const [color, setColor] = useState<string>(DEFAULT_COLOR);
+  const [icon, setIcon] = useState<string>("");
   const [recurrence, setRecurrence] = useState<EventRecurrence>("none");
   const [recurrenceEnd, setRecurrenceEnd] = useState("");
   const [businessDayOffset, setBusinessDayOffset] = useState(1);
@@ -91,6 +93,7 @@ export default function EventForm({
       setDescription(event.description);
       setTags(event.tags);
       setColor(event.color);
+      setIcon(event.icon ?? "");
       // Al editar "solo este", se vuelve un evento suelto (sin recurrencia)
       setRecurrence(editOneDate ? "none" : event.recurrence);
       setRecurrenceEnd(editOneDate ? "" : (event.recurrenceEnd ?? ""));
@@ -108,6 +111,7 @@ export default function EventForm({
       setDescription("");
       setTags([]);
       setColor(DEFAULT_COLOR);
+      setIcon("");
       setRecurrence("none");
       setRecurrenceEnd("");
       setBusinessDayOffset(1);
@@ -138,6 +142,7 @@ export default function EventForm({
     description: description.trim(),
     tags,
     color,
+    icon,
     recurrence,
     recurrenceEnd:
       recurrence !== "none" && recurrenceEnd ? recurrenceEnd : null,
@@ -354,6 +359,10 @@ export default function EventForm({
 
         <Field label={tc("color")}>
           <ColorPicker value={color} onChange={setColor} />
+        </Field>
+
+        <Field label={tc("icon")} optional>
+          <IconPicker value={icon} onChange={setIcon} accent={color} />
         </Field>
 
         <Field label={tc("tags")} optional>

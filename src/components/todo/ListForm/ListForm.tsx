@@ -7,6 +7,7 @@ import Button from "@/components/ui/Button/Button";
 import Field from "@/components/ui/Field/Field";
 import TextInput from "@/components/ui/Field/TextInput";
 import ColorPicker from "@/components/ui/ColorPicker/ColorPicker";
+import IconPicker from "@/components/ui/IconPicker/IconPicker";
 import { DEFAULT_COLOR } from "@/utils/colors";
 import type { TodoList } from "@/types/todo";
 
@@ -30,6 +31,7 @@ export default function ListForm({
 
   const [name, setName] = useState("");
   const [color, setColor] = useState<string>(DEFAULT_COLOR);
+  const [icon, setIcon] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -38,6 +40,7 @@ export default function ListForm({
     setError(null);
     setName(list?.name ?? "");
     setColor(list?.color ?? DEFAULT_COLOR);
+    setIcon(list?.icon ?? "");
   }, [open, list]);
 
   const handleSubmit = async () => {
@@ -48,10 +51,10 @@ export default function ListForm({
     setSaving(true);
     try {
       if (list) {
-        await editList(list.id, { name: name.trim(), color });
+        await editList(list.id, { name: name.trim(), color, icon });
         onClose();
       } else {
-        const id = await addList({ name: name.trim(), color });
+        const id = await addList({ name: name.trim(), color, icon });
         onClose();
         if (id && onCreated) onCreated(id);
       }
@@ -90,6 +93,9 @@ export default function ListForm({
         </Field>
         <Field label={tc("color")}>
           <ColorPicker value={color} onChange={setColor} />
+        </Field>
+        <Field label={tc("icon")} optional>
+          <IconPicker value={icon} onChange={setIcon} accent={color} />
         </Field>
       </div>
     </Modal>

@@ -3,6 +3,7 @@ import { useMemo, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { eventsOnDate, layoutTimedEvents } from "@/utils/events";
 import { dateKey, todayKey } from "@/utils/dates";
+import FlowIcon from "@/utils/icons";
 import type { FlowEvent } from "@/types/event";
 import "./TimeGrid.scss";
 
@@ -88,7 +89,8 @@ export default function TimeGrid({
                   style={{ "--ev": ev.color } as React.CSSProperties}
                   onClick={() => onSelectEvent(ev, d.key)}
                 >
-                  {ev.title}
+                  <FlowIcon name={ev.icon} className="time-grid__chip-icon" />
+                  <span className="time-grid__chip-text">{ev.title}</span>
                 </button>
               ))}
             </div>
@@ -158,7 +160,13 @@ export default function TimeGrid({
                     }}
                   >
                     <span className="time-grid__event-title">
-                      {pos.event.title}
+                      <FlowIcon
+                        name={pos.event.icon}
+                        className="time-grid__event-icon"
+                      />
+                      <span className="time-grid__event-text">
+                        {pos.event.title}
+                      </span>
                     </span>
                     {pos.event.startTime && (
                       <span className="time-grid__event-time">

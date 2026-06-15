@@ -6,6 +6,8 @@ export interface TodoList {
   id: string;
   name: string;
   color: string;
+  /** Clave del icono (ver utils/icons). "" / ausente = sin icono. */
+  icon?: string;
   order: number;
   createdAt: number;
   /** Si se muestran las tareas completadas en esta lista. Por defecto sí. */

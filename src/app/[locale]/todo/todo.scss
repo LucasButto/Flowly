@@ -89,6 +89,13 @@
     flex-shrink: 0;
   }
 
+  // Selector escopeado al padre para ganarle a la clase de MUI (.MuiSvgIcon-root)
+  &__list-card-top &__list-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+
   &__list-name {
     flex: 1;
     min-width: 0;

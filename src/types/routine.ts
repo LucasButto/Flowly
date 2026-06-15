@@ -20,6 +20,8 @@ export interface Routine {
   tag: string;
   description: string;
   color: string; // hex
+  /** Clave del icono (ver utils/icons). "" / ausente = sin icono. */
+  icon?: string;
   /** false = pausada (vacaciones, etc.). Ausente = activa. */
   active?: boolean;
   /** Historial de pausas: esos días no cuentan para rachas ni agregados. */

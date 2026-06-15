@@ -29,6 +29,7 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import CloudDownloadRoundedIcon from "@mui/icons-material/CloudDownloadRounded";
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
+import FlowIcon from "@/utils/icons";
 import type { FlowEvent } from "@/types/event";
 import "./events.scss";
 
@@ -304,7 +305,18 @@ export default function EventsPage() {
       <Modal
         open={!!detail}
         onClose={() => setDetail(null)}
-        title={detail?.title}
+        title={
+          detail ? (
+            <span className="events__detail-title">
+              <FlowIcon
+                name={detail.icon}
+                className="events__detail-icon"
+                style={{ color: detail.color }}
+              />
+              {detail.title}
+            </span>
+          ) : undefined
+        }
         size="sm"
         footer={
           <>
@@ -398,10 +410,15 @@ export default function EventsPage() {
                   if (k) openDetail(ev, k);
                 }}
               >
+                <FlowIcon
+                  name={ev.icon}
+                  className="events__day-icon"
+                  style={{ color: ev.color }}
+                />
+                <span className="events__day-title">{ev.title}</span>
                 <span className="events__day-time">
                   {ev.startTime ? ev.startTime : t("allDay")}
                 </span>
-                <span className="events__day-title">{ev.title}</span>
               </button>
             </li>
           ))}

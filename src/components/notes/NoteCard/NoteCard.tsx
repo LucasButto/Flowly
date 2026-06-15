@@ -8,6 +8,7 @@ import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { formatDate } from "@/utils/dates";
+import FlowIcon from "@/utils/icons";
 import type { Note, NoteBlock } from "@/types/note";
 import "./NoteCard.scss";
 
@@ -83,7 +84,14 @@ export default function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
         </div>
       </header>
 
-      <h3 className="note-card__title">{note.title || t("untitled")}</h3>
+      <div className="note-card__title-row">
+        <FlowIcon
+          name={note.icon}
+          className="note-card__icon"
+          style={{ color: note.color }}
+        />
+        <h3 className="note-card__title">{note.title || t("untitled")}</h3>
+      </div>
 
       {visible.length > 0 && (
         <div className="note-card__body">

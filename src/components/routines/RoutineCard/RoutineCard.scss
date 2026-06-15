@@ -20,6 +20,7 @@
   &--paused {
     .routine-card__bar,
     .routine-card__title,
+    .routine-card__icon,
     .routine-card__meta,
     .routine-card__desc,
     .routine-card__daypills,
@@ -27,6 +28,11 @@
     .routine-card__actions {
       opacity: 0.62;
       filter: saturate(0.15);
+    }
+
+    // El icono pierde su color de acento y sigue el gris del resto de la card
+    .routine-card__icon {
+      color: var(--text-muted);
     }
   }
 
@@ -92,6 +98,19 @@
 
   &__title-wrap {
     min-width: 0;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  &__title-row &__icon {
+    flex-shrink: 0;
+    width: 1.15rem;
+    height: 1.15rem;
   }
 
   &__title {

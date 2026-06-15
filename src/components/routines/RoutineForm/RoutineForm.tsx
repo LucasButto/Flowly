@@ -9,6 +9,7 @@ import Field from "@/components/ui/Field/Field";
 import TextInput from "@/components/ui/Field/TextInput";
 import TextArea from "@/components/ui/Field/TextArea";
 import ColorPicker from "@/components/ui/ColorPicker/ColorPicker";
+import IconPicker from "@/components/ui/IconPicker/IconPicker";
 import DaySelector from "@/components/routines/DaySelector/DaySelector";
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { ALL_DAYS, type Weekday } from "@/types/common";
@@ -33,6 +34,7 @@ interface Draft {
   tag: string;
   description: string;
   color: string;
+  icon: string;
 }
 
 const emptyDraft = (): Draft => ({
@@ -44,6 +46,7 @@ const emptyDraft = (): Draft => ({
   tag: "",
   description: "",
   color: DEFAULT_COLOR,
+  icon: "",
 });
 
 export default function RoutineForm({
@@ -78,6 +81,7 @@ export default function RoutineForm({
         tag: routine.tag,
         description: routine.description,
         color: routine.color,
+        icon: routine.icon ?? "",
       });
     } else {
       setDraft(emptyDraft());
@@ -120,6 +124,7 @@ export default function RoutineForm({
       tag: draft.tag.trim(),
       description: draft.description.trim(),
       color: draft.color,
+      icon: draft.icon,
     };
     setSaving(true);
     try {
@@ -288,6 +293,14 @@ export default function RoutineForm({
 
         <Field label={tc("color")}>
           <ColorPicker value={draft.color} onChange={(c) => set("color", c)} />
+        </Field>
+
+        <Field label={tc("icon")} optional>
+          <IconPicker
+            value={draft.icon}
+            onChange={(i) => set("icon", i)}
+            accent={draft.color}
+          />
         </Field>
 
         <Field label={tc("description")} optional>

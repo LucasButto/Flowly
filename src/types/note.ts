@@ -7,6 +7,8 @@ export interface Note {
   title: string;
   /** Color de acento de la card (mismos presets que rutinas/listas). */
   color: string;
+  /** Clave del icono (ver utils/icons). "" / ausente = sin icono. */
+  icon?: string;
   pinned: boolean;
   blocks: NoteBlock[];
   createdAt: number;

@@ -6,6 +6,7 @@ import Modal from "@/components/ui/Modal/Modal";
 import Button from "@/components/ui/Button/Button";
 import IconButton from "@/components/ui/IconButton/IconButton";
 import ColorPicker from "@/components/ui/ColorPicker/ColorPicker";
+import IconPicker from "@/components/ui/IconPicker/IconPicker";
 import BlockEditor from "@/components/blocks/BlockEditor/BlockEditor";
 import PushPinRoundedIcon from "@mui/icons-material/PushPinRounded";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
@@ -27,6 +28,7 @@ export default function NoteEditor({ open, note, onClose }: NoteEditorProps) {
 
   const [title, setTitle] = useState("");
   const [color, setColor] = useState<string>(DEFAULT_COLOR);
+  const [icon, setIcon] = useState<string>("");
   const [pinned, setPinned] = useState(false);
   const [blocks, setBlocks] = useState<NoteBlock[]>([newBlock()]);
   const [saving, setSaving] = useState(false);
@@ -35,6 +37,7 @@ export default function NoteEditor({ open, note, onClose }: NoteEditorProps) {
     if (!open) return;
     setTitle(note?.title ?? "");
     setColor(note?.color ?? DEFAULT_COLOR);
+    setIcon(note?.icon ?? "");
     setPinned(note?.pinned ?? false);
     setBlocks(
       note?.blocks?.length ? note.blocks.map((b) => ({ ...b })) : [newBlock()],
@@ -56,6 +59,7 @@ export default function NoteEditor({ open, note, onClose }: NoteEditorProps) {
         await editNote(note.id, {
           title: cleanTitle,
           color,
+          icon,
           pinned,
           blocks: blocksClean,
         });
@@ -63,6 +67,7 @@ export default function NoteEditor({ open, note, onClose }: NoteEditorProps) {
         await addNote({
           title: cleanTitle,
           color,
+          icon,
           pinned,
           blocks: blocksClean,
         });
@@ -115,6 +120,11 @@ export default function NoteEditor({ open, note, onClose }: NoteEditorProps) {
           placeholder={t("titlePlaceholder")}
           maxLength={140}
         />
+
+        <div className="note-editor__icons">
+          <span className="note-editor__icons-label">{tc("icon")}</span>
+          <IconPicker value={icon} onChange={setIcon} accent={color} />
+        </div>
 
         <BlockEditor value={blocks} onChange={setBlocks} />
       </div>

@@ -16,6 +16,8 @@ export interface FlowEvent {
   location: string;
   tags: string[];
   color: string;
+  /** Clave del icono (ver utils/icons). "" / ausente = sin icono. */
+  icon?: string;
   recurrence: EventRecurrence;
   recurrenceEnd: string | null; // "YYYY-MM-DD" límite de repetición
   // Para recurrence "businessDay": ordinal del día hábil del mes.

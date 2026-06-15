@@ -35,6 +35,7 @@ import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import FlowIcon from "@/utils/icons";
 import type { Task, TaskStatus, TodoList } from "@/types/todo";
 import "./todo.scss";
 
@@ -236,7 +237,15 @@ export default function TodoPage() {
                     style={{ "--list": l.color } as React.CSSProperties}
                   >
                     <div className="todo__list-card-top">
-                      <span className="todo__list-dot" />
+                      {l.icon ? (
+                        <FlowIcon
+                          name={l.icon}
+                          className="todo__list-icon"
+                          style={{ color: "var(--list)" }}
+                        />
+                      ) : (
+                        <span className="todo__list-dot" />
+                      )}
                       <h3 className="todo__list-name">{l.name}</h3>
                       <ChevronRightRoundedIcon className="todo__list-chevron" />
                     </div>

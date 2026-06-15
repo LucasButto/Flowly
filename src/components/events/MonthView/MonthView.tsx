@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { eventsOnDate } from "@/utils/events";
 import { startOfWeek, startOfMonth, addDays, dateKey, todayKey } from "@/utils/dates";
+import FlowIcon from "@/utils/icons";
 import type { FlowEvent } from "@/types/event";
 import "./MonthView.scss";
 
@@ -69,6 +70,7 @@ export default function MonthView({
                     }}
                     title={ev.title}
                   >
+                    <FlowIcon name={ev.icon} className="month-view__chip-icon" />
                     {ev.startTime && (
                       <span className="month-view__chip-time">
                         {ev.startTime}

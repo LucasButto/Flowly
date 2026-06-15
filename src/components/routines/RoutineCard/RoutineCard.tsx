@@ -16,6 +16,7 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { todayKey } from "@/utils/dates";
 import { isRoutineActive, isRoutinePausedOn } from "@/utils/routineStats";
 import { contrastText } from "@/utils/colors";
+import FlowIcon from "@/utils/icons";
 import { DAY_KEYS, WEEK_ORDER } from "@/types/common";
 import type { Routine } from "@/types/routine";
 import "./RoutineCard.scss";
@@ -78,7 +79,14 @@ export default function RoutineCard({
       <div className="routine-card__body">
         <div className="routine-card__head">
           <div className="routine-card__title-wrap">
-            <h3 className="routine-card__title">{routine.name}</h3>
+            <div className="routine-card__title-row">
+              <FlowIcon
+                name={routine.icon}
+                className="routine-card__icon"
+                style={dimmed ? undefined : { color: routine.color }}
+              />
+              <h3 className="routine-card__title">{routine.name}</h3>
+            </div>
             <div className="routine-card__meta">
               <span className="routine-card__time">
                 <ScheduleRoundedIcon />
