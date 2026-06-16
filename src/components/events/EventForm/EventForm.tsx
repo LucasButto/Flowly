@@ -8,11 +8,13 @@ import {
   todayKey,
   parseDateKey,
   formatDate,
+  addMinutesToTime,
 } from "@/utils/dates";
 import Modal from "@/components/ui/Modal/Modal";
 import Button from "@/components/ui/Button/Button";
 import Field from "@/components/ui/Field/Field";
 import TextInput from "@/components/ui/Field/TextInput";
+import TimeField from "@/components/ui/Field/TimeField";
 import TextArea from "@/components/ui/Field/TextArea";
 import Select from "@/components/ui/Field/Select";
 import Switch from "@/components/ui/Switch/Switch";
@@ -280,18 +282,17 @@ export default function EventForm({
         {!allDay && (
           <div className="event-form__row">
             <Field label={t("startTime")}>
-              <TextInput
-                type="time"
+              <TimeField
                 value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
+                onChange={(v) => {
+                  setStartTime(v);
+                  // Al elegir inicio, fin salta a +1h (ajustable luego)
+                  setEndTime(addMinutesToTime(v, 60));
+                }}
               />
             </Field>
             <Field label={t("endTime")}>
-              <TextInput
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-              />
+              <TimeField value={endTime} onChange={setEndTime} />
             </Field>
           </div>
         )}

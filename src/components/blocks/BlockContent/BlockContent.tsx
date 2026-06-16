@@ -1,54 +1,70 @@
 "use client";
-import { Fragment } from "react";
+import { type ReactNode } from "react";
 import type { NoteBlock } from "@/types/blocks";
 import "./BlockContent.scss";
 
-const URL_RE = /(https?:\/\/[^\s<>"')\]]+)/g;
-const BOLD_RE = /\*\*([^*]+)\*\*/g;
-
-/** Renderiza texto plano convirtiendo URLs en links clicables. */
-export function Linkified({ text }: { text: string }) {
-  // split con grupo de captura: las URLs quedan en los índices impares
-  const parts = text.split(URL_RE);
-  return (
-    <>
-      {parts.map((part, i) =>
-        i % 2 === 1 ? (
-          <a
-            key={i}
-            href={part}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="blocks-view__link"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {part.replace(/^https?:\/\/(www\.)?/, "")}
-          </a>
-        ) : (
-          <Fragment key={i}>{part}</Fragment>
-        ),
-      )}
-    </>
-  );
+interface InlineRule {
+  re: RegExp;
+  render: (m: RegExpExecArray, key: string) => ReactNode;
 }
 
-/** Texto con **negritas** y links clicables (cualquier tipo de bloque). */
+// Reglas inline. Se elige siempre el match más temprano del texto.
+const INLINE_RULES: InlineRule[] = [
+  {
+    // **negrita**
+    re: /\*\*([^*]+?)\*\*/,
+    render: (m, k) => <strong key={k}>{parseInline(m[1] ?? "", k)}</strong>,
+  },
+  {
+    // ~~tachado~~
+    re: /~~([^~]+?)~~/,
+    render: (m, k) => <del key={k}>{parseInline(m[1] ?? "", k)}</del>,
+  },
+  {
+    // _itálica_  (con bordes de palabra para no romper URLs o snake_case)
+    re: /(?<![\w*])_([^_]+?)_(?![\w*])/,
+    render: (m, k) => <em key={k}>{parseInline(m[1] ?? "", k)}</em>,
+  },
+  {
+    // links
+    re: /(https?:\/\/[^\s<>"')\]]+)/,
+    render: (m, k) => (
+      <a
+        key={k}
+        href={m[1]}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="blocks-view__link"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {(m[1] ?? "").replace(/^https?:\/\/(www\.)?/, "")}
+      </a>
+    ),
+  },
+];
+
+/** Parser inline recursivo: negrita, itálica, tachado y links anidables. */
+function parseInline(text: string, keyBase = "k"): ReactNode[] {
+  let best: { rule: InlineRule; m: RegExpExecArray } | null = null;
+  for (const rule of INLINE_RULES) {
+    const m = rule.re.exec(text);
+    if (m && (best === null || m.index < best.m.index)) best = { rule, m };
+  }
+  if (!best) return text ? [text] : [];
+
+  const { rule, m } = best;
+  const before = text.slice(0, m.index);
+  const after = text.slice(m.index + m[0].length);
+  const nodes: ReactNode[] = [];
+  if (before) nodes.push(before);
+  nodes.push(rule.render(m, `${keyBase}-${m.index}`));
+  nodes.push(...parseInline(after, `${keyBase}-${m.index}a`));
+  return nodes;
+}
+
+/** Texto con formato inline (negrita/itálica/tachado) y links clicables. */
 export function RichText({ text }: { text: string }) {
-  // split con grupo de captura: las negritas quedan en los índices impares
-  const parts = text.split(BOLD_RE);
-  return (
-    <>
-      {parts.map((part, i) =>
-        i % 2 === 1 ? (
-          <strong key={i}>
-            <Linkified text={part} />
-          </strong>
-        ) : (
-          <Linkified key={i} text={part} />
-        ),
-      )}
-    </>
-  );
+  return <>{parseInline(text)}</>;
 }
 
 interface BlockContentProps {

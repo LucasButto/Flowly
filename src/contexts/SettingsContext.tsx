@@ -13,11 +13,13 @@ import { db } from "@/firebase/config";
 import { useAuth } from "./AuthContext";
 
 export type ThemePref = "light" | "dark" | "system";
+export type SoundDuration = "short" | "medium" | "long";
 
 export interface Settings {
   theme: ThemePref;
   timezone: string;
   notifications: boolean;
+  soundDuration: SoundDuration;
 }
 
 const STORAGE_KEY = "flowly_settings";
@@ -34,6 +36,7 @@ const DEFAULTS: Settings = {
   theme: "system",
   timezone: detectTimezone(),
   notifications: false,
+  soundDuration: "medium",
 };
 
 function readLocal(): Settings {

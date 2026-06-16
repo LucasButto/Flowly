@@ -62,6 +62,14 @@ export function timeToMinutes(time: string): number {
   return (h ?? 0) * 60 + (m ?? 0);
 }
 
+/** Suma minutos a una hora "HH:mm", sin pasar de "23:59" ni de "00:00". */
+export function addMinutesToTime(time: string, minutes: number): string {
+  const total = Math.min(Math.max(timeToMinutes(time) + minutes, 0), 23 * 60 + 59);
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
 /** ¿Se solapan dos rangos horarios [aStart,aEnd) y [bStart,bEnd)? */
 export function timeRangesOverlap(
   aStart: string,

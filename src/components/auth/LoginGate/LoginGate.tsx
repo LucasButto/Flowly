@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import Sidebar from "@/components/layout/Sidebar/Sidebar";
 import Brand from "@/components/layout/Brand/Brand";
 import Spinner from "@/components/ui/Spinner/Spinner";
-import EventReminders from "@/components/events/EventReminders/EventReminders";
+import Reminders from "@/components/notifications/Reminders/Reminders";
 import "./LoginGate.scss";
 
 export default function LoginGate({ children }: { children: ReactNode }) {
@@ -29,7 +29,7 @@ export default function LoginGate({ children }: { children: ReactNode }) {
     <div className="app-shell">
       <Sidebar />
       <div className="app-main">{children}</div>
-      <EventReminders />
+      <Reminders />
     </div>
   );
 }

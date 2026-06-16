@@ -126,7 +126,7 @@ export default function NoteEditor({ open, note, onClose }: NoteEditorProps) {
           <IconPicker value={icon} onChange={setIcon} accent={color} />
         </div>
 
-        <BlockEditor value={blocks} onChange={setBlocks} />
+        <BlockEditor value={blocks} onChange={setBlocks} stickyToolbar />
       </div>
     </Modal>
   );
