@@ -17,10 +17,15 @@
     gap: 0.35rem;
     padding: 1px 0;
     border-radius: $radius-sm;
+    transition: background 0.12s ease;
+
+    // Resaltar el bloque activo (la toolbar de tipos actúa sobre éste)
+    &:focus-within {
+      background: var(--surface-2);
+    }
   }
 
-  &__grip,
-  &__remove {
+  &__grip {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -42,6 +47,7 @@
 
   &__grip {
     cursor: grab;
+    touch-action: none;
     opacity: 0.45;
     &:active {
       cursor: grabbing;
@@ -49,20 +55,29 @@
     .block-editor__row:hover & {
       opacity: 1;
     }
+
+    // En mobile el asa va a la derecha (más cómoda para el pulgar)
+    @include respond-down(md) {
+      order: 1;
+    }
   }
 
-  // Siempre visible: borrar un bloque tiene que ser obvio
-  &__remove {
+  // Acciones del bloque: botón "kebab" (3 puntitos) que abre el menú
+  &__actions {
+    flex-shrink: 0;
+  }
+
+  &__menu-btn {
     opacity: 0.55;
 
-    &:hover {
+    .block-editor__row:hover &,
+    .block-editor__row:focus-within & {
       opacity: 1;
-      color: var(--danger);
-      background: rgb(var(--danger-rgb) / 0.12);
     }
 
-    .block-editor__row:hover & {
-      opacity: 1;
+    // En táctil no hay hover: bien visible
+    @include respond-down(md) {
+      opacity: 0.9;
     }
   }
 
@@ -167,7 +182,39 @@
     margin: 0.6rem 0;
   }
 
-  // ─── Toolbar para agregar bloques ───
+  // ─── Botón "agregar texto" (full width, debajo del último bloque) ───
+  &__add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.2rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: $radius-sm;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      color 0.14s ease,
+      border-color 0.14s ease,
+      background 0.14s ease;
+
+    svg {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+
+    &:hover {
+      color: var(--brand);
+      border-color: rgb(var(--brand-rgb) / 0.5);
+      background: rgb(var(--brand-rgb) / 0.06);
+    }
+  }
+
+  // ─── Toolbar de formato ───
   &__toolbar {
     display: flex;
     align-items: center;
@@ -175,6 +222,18 @@
     gap: 0.25rem;
     padding-top: 0.5rem;
     border-top: 1px solid var(--border);
+  }
+
+  // Fijada al fondo del modal scrolleable (sangra hasta los bordes del body).
+  // bottom negativo = pin a ras del borde inferior, sin dejar ver contenido
+  // detrás en el padding del body.
+  &__toolbar--sticky {
+    position: sticky;
+    bottom: -1.35rem;
+    z-index: 2;
+    margin: 0.4rem -1.35rem -1.35rem;
+    padding: 0.6rem 1.35rem;
+    background: var(--bg-elevated);
   }
 
   &__toolbar-label {

@@ -74,6 +74,7 @@ export default function TodoPage() {
     }
   }, [lists, selected]);
 
+  // Se arrastra solo desde el asa (grip) de cada tarea.
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, {

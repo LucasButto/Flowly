@@ -14,7 +14,7 @@ import {
   subscribePomodoroSessions,
   createPomodoroSession,
 } from "@/services/pomodoro";
-import { notify } from "@/utils/notify";
+import { notify, playChime } from "@/utils/notify";
 import { todayKey } from "@/utils/dates";
 import { newId } from "@/utils/ids";
 import type {
@@ -99,8 +99,24 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
     (phase === "work" ? config.workMinutes : config.breakMinutes) * 60;
 
   // refs para el cierre del intervalo
-  const ref = useRef({ phase, cycle, config, running, link, uid: user?.uid });
-  ref.current = { phase, cycle, config, running, link, uid: user?.uid };
+  const ref = useRef({
+    phase,
+    cycle,
+    config,
+    running,
+    link,
+    uid: user?.uid,
+    soundDuration: settings.soundDuration,
+  });
+  ref.current = {
+    phase,
+    cycle,
+    config,
+    running,
+    link,
+    uid: user?.uid,
+    soundDuration: settings.soundDuration,
+  };
   const notifyOn = settings.notifications;
 
   // Suscripción a sesiones
@@ -144,11 +160,13 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
 
       if (ph === "work") {
         logSession(cfg.workMinutes, lk);
-        if (notifyOn)
-          notify(
-            "Flowly · Pomodoro",
-            "¡Pomodoro completado! Tomate un descanso.",
-          );
+        if (notifyOn) {
+          void notify("Flowly · Pomodoro", {
+            body: "¡Pomodoro completado! Tomate un descanso.",
+            url: "/pomodoro",
+          });
+          playChime(ref.current.soundDuration);
+        }
         const secs = cfg.breakMinutes * 60;
         setPhase("break");
         setRemaining(secs);
@@ -162,8 +180,13 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
       } else {
         // fin de descanso
         if (cy < cfg.cycles) {
-          if (notifyOn)
-            notify("Flowly · Pomodoro", "Descanso terminado. ¡A enfocar!");
+          if (notifyOn) {
+            void notify("Flowly · Pomodoro", {
+              body: "Descanso terminado. ¡A enfocar!",
+              url: "/pomodoro",
+            });
+            playChime(ref.current.soundDuration);
+          }
           const secs = cfg.workMinutes * 60;
           setCycle(cy + 1);
           setPhase("work");
@@ -177,8 +200,13 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
           }
         } else {
           // completó todos los ciclos
-          if (notifyOn)
-            notify("Flowly · Pomodoro", "¡Completaste todos los ciclos!");
+          if (notifyOn) {
+            void notify("Flowly · Pomodoro", {
+              body: "¡Completaste todos los ciclos!",
+              url: "/pomodoro",
+            });
+            playChime(ref.current.soundDuration);
+          }
           setPhase("work");
           setCycle(1);
           setRemaining(cfg.workMinutes * 60);

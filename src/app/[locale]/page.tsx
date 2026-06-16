@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRoutines } from "@/contexts/RoutinesContext";
 import { useTodo } from "@/contexts/TodoContext";
 import { useEvents } from "@/contexts/EventsContext";
-import { routineRunsOn } from "@/utils/routineStats";
+import { routineRunsOn, isRoutinePausedOn } from "@/utils/routineStats";
 import { occurrencesInRange } from "@/utils/events";
 import {
   addDays,
@@ -52,10 +52,15 @@ export default function DashboardPage() {
     () => routines.filter((r) => routineRunsOn(r, today)),
     [routines, today],
   );
-  const completedCount = todayRoutines.filter(
+  // Las rutinas pausadas (modo vacaciones) no cuentan en el resumen del día
+  const activeTodayRoutines = useMemo(
+    () => todayRoutines.filter((r) => !isRoutinePausedOn(r, todayK)),
+    [todayRoutines, todayK],
+  );
+  const completedCount = activeTodayRoutines.filter(
     (r) => getStatus(r.id, todayK) === "completed",
   ).length;
-  const pendingCount = todayRoutines.filter(
+  const pendingCount = activeTodayRoutines.filter(
     (r) => getStatus(r.id, todayK) === "pending",
   ).length;
 

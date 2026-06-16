@@ -178,3 +178,93 @@
     color: var(--text-muted);
   }
 }
+
+// ─── Selector de hora propio ───
+.fl-time {
+  &__trigger {
+    padding-right: 0.6rem;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    color: var(--text-muted);
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  &__head {
+    padding: 0.6rem;
+    text-align: center;
+    font-family: $font-mono;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__cols {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+  }
+
+  &__divider {
+    width: 1px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  &__col {
+    flex: 1;
+    min-width: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    @include scrollbar-thin;
+    scroll-behavior: smooth;
+  }
+
+  &__opt {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem 0.4rem;
+    border-radius: $radius-sm;
+    font-family: $font-mono;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition:
+      background 0.12s ease,
+      color 0.12s ease;
+
+    &:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    &--sel {
+      background: rgb(var(--brand-rgb) / 0.16);
+      color: var(--brand);
+      font-weight: 700;
+    }
+  }
+
+  &__done {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--brand);
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s ease;
+
+    &:hover {
+      background: var(--surface-2);
+    }
+  }
+}

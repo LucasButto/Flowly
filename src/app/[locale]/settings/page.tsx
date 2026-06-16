@@ -1,7 +1,11 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useSettings, type ThemePref } from "@/contexts/SettingsContext";
+import {
+  useSettings,
+  type ThemePref,
+  type SoundDuration,
+} from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/Toast/ToastProvider";
 import { useRouter } from "@/navigation";
@@ -16,7 +20,15 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import SettingsBrightnessRoundedIcon from "@mui/icons-material/SettingsBrightnessRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
+import NotificationsActiveRoundedIcon from "@mui/icons-material/NotificationsActiveRounded";
 import { seedSampleData } from "@/services/seed";
+import {
+  notify,
+  playChime,
+  unlockAudio,
+  requestNotificationPermission,
+  registerNotificationSW,
+} from "@/utils/notify";
 import "./settings.scss";
 
 function timezoneList(current: string): string[] {
@@ -99,15 +111,44 @@ export default function SettingsPage() {
   ];
 
   const handleNotifications = async (checked: boolean) => {
-    if (checked && "Notification" in window) {
-      const perm = await Notification.requestPermission();
-      if (perm !== "granted") {
-        toast("Permiso de notificaciones denegado", "error");
+    if (checked) {
+      // Desbloquear el audio dentro de este gesto del usuario.
+      unlockAudio();
+      const granted = await requestNotificationPermission();
+      if (!granted) {
+        toast(t("notificationsDenied"), "error");
         return;
       }
+      void registerNotificationSW();
     }
     updateSettings({ notifications: checked });
     toast(t("saved"), "success");
+  };
+
+  const [testing, setTesting] = useState(false);
+  const handleTestNotification = async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      toast(t("notificationsUnsupported"), "error");
+      return;
+    }
+    setTesting(true);
+    unlockAudio();
+    const granted = await requestNotificationPermission();
+    if (!granted) {
+      toast(t("notificationsDenied"), "error");
+      setTesting(false);
+      return;
+    }
+    if (!settings.notifications) updateSettings({ notifications: true });
+    await registerNotificationSW();
+    await notify(`Flowly · ${t("testTitle")}`, {
+      body: t("testBody"),
+      tag: "flowly-test",
+      url: "/settings",
+    });
+    playChime(settings.soundDuration);
+    toast(t("testSent"), "success");
+    setTesting(false);
   };
 
   const handleLogout = async () => {
@@ -186,6 +227,42 @@ export default function SettingsPage() {
             onChange={handleNotifications}
             label={t("notificationsEnable")}
           />
+        </div>
+        <div className="settings__row">
+          <div>
+            <p className="settings__row-label">{t("soundDuration")}</p>
+            <p className="settings__row-hint">{t("soundDurationHint")}</p>
+          </div>
+          <div className="settings__select">
+            <Select
+              value={settings.soundDuration}
+              onChange={(v) => {
+                const dur = v as SoundDuration;
+                updateSettings({ soundDuration: dur });
+                // Reproducir una muestra para oír el largo elegido
+                unlockAudio();
+                playChime(dur);
+              }}
+            >
+              <option value="short">{t("durationShort")}</option>
+              <option value="medium">{t("durationMedium")}</option>
+              <option value="long">{t("durationLong")}</option>
+            </Select>
+          </div>
+        </div>
+        <div className="settings__row">
+          <div>
+            <p className="settings__row-label">{t("testNotification")}</p>
+            <p className="settings__row-hint">{t("testNotificationHint")}</p>
+          </div>
+          <Button
+            variant="secondary"
+            icon={<NotificationsActiveRoundedIcon />}
+            onClick={handleTestNotification}
+            loading={testing}
+          >
+            {t("testButton")}
+          </Button>
         </div>
       </section>
 

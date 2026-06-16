@@ -36,6 +36,11 @@
       width: 1.2rem;
       height: 1.2rem;
     }
+
+    // En mobile el asa va a la derecha (más cómoda para el pulgar)
+    @include respond-down(md) {
+      order: 1;
+    }
   }
 
   &__check {

@@ -7,6 +7,7 @@ import Modal from "@/components/ui/Modal/Modal";
 import Button from "@/components/ui/Button/Button";
 import Field from "@/components/ui/Field/Field";
 import TextInput from "@/components/ui/Field/TextInput";
+import TimeField from "@/components/ui/Field/TimeField";
 import TextArea from "@/components/ui/Field/TextArea";
 import ColorPicker from "@/components/ui/ColorPicker/ColorPicker";
 import IconPicker from "@/components/ui/IconPicker/IconPicker";
@@ -15,7 +16,11 @@ import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { ALL_DAYS, type Weekday } from "@/types/common";
 import type { Routine, RoutineFrequency, RoutineInput } from "@/types/routine";
 import { DEFAULT_COLOR } from "@/utils/colors";
-import { timeRangesOverlap, timeToMinutes } from "@/utils/dates";
+import {
+  timeRangesOverlap,
+  timeToMinutes,
+  addMinutesToTime,
+} from "@/utils/dates";
 import "./RoutineForm.scss";
 
 interface RoutineFormProps {
@@ -258,17 +263,22 @@ export default function RoutineForm({
 
         <div className="routine-form__row">
           <Field label={t("startTime")}>
-            <TextInput
-              type="time"
+            <TimeField
               value={draft.startTime}
-              onChange={(e) => set("startTime", e.target.value)}
+              onChange={(v) =>
+                setDraft((d) => ({
+                  ...d,
+                  startTime: v,
+                  // Al elegir inicio, fin salta a +1h (el fin se puede ajustar luego)
+                  endTime: addMinutesToTime(v, 60),
+                }))
+              }
             />
           </Field>
           <Field label={t("endTime")}>
-            <TextInput
-              type="time"
+            <TimeField
               value={draft.endTime}
-              onChange={(e) => set("endTime", e.target.value)}
+              onChange={(v) => set("endTime", v)}
             />
           </Field>
         </div>

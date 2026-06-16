@@ -18,10 +18,17 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useToast } from "@/components/ui/Toast/ToastProvider";
 import IconButton from "@/components/ui/IconButton/IconButton";
+import ActionMenu from "@/components/ui/ActionMenu/ActionMenu";
 import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import ContentCutRoundedIcon from "@mui/icons-material/ContentCutRounded";
 import FormatBoldRoundedIcon from "@mui/icons-material/FormatBoldRounded";
+import FormatItalicRoundedIcon from "@mui/icons-material/FormatItalicRounded";
+import StrikethroughSRoundedIcon from "@mui/icons-material/StrikethroughSRounded";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import TextFieldsRoundedIcon from "@mui/icons-material/TextFieldsRounded";
 import TitleRoundedIcon from "@mui/icons-material/TitleRounded";
 import FormatListBulletedRoundedIcon from "@mui/icons-material/FormatListBulletedRounded";
@@ -61,16 +68,24 @@ function matchShortcut(
 interface BlockEditorProps {
   value: NoteBlock[];
   onChange: (blocks: NoteBlock[]) => void;
+  /** Fija la barra de formato al fondo del contenedor scrolleable. */
+  stickyToolbar?: boolean;
 }
 
 /** Editor de bloques controlado (notas, descripciones de tareas). */
-export default function BlockEditor({ value, onChange }: BlockEditorProps) {
+export default function BlockEditor({
+  value,
+  onChange,
+  stickyToolbar = false,
+}: BlockEditorProps) {
   const t = useTranslations("notes");
+  const toast = useToast();
 
   const inputRefs = useRef(new Map<string, HTMLTextAreaElement>());
   const pendingFocus = useRef<string | null>(null);
+  const focusedId = useRef<string | null>(null);
 
-  // Enfocar el bloque recién creado
+  // Enfocar el bloque recién creado / convertido
   useEffect(() => {
     if (!pendingFocus.current) return;
     const el = inputRefs.current.get(pendingFocus.current);
@@ -81,6 +96,7 @@ export default function BlockEditor({ value, onChange }: BlockEditorProps) {
     pendingFocus.current = null;
   }, [value]);
 
+  // Se arrastra solo desde el asa (grip), para no pisar la selección de texto.
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, {
@@ -111,6 +127,7 @@ export default function BlockEditor({ value, onChange }: BlockEditorProps) {
 
   const removeBlock = useCallback(
     (id: string) => {
+      if (focusedId.current === id) focusedId.current = null;
       if (value.length <= 1) {
         onChange([newBlock()]);
         return;
@@ -121,6 +138,32 @@ export default function BlockEditor({ value, onChange }: BlockEditorProps) {
       onChange(value.filter((b) => b.id !== id));
     },
     [value, onChange],
+  );
+
+  // ─── Copiar / cortar al portapapeles ───
+  const copyText = useCallback(
+    async (text: string) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        toast(t("copied"), "success");
+      } catch {
+        // entorno sin permiso de clipboard: no rompemos el flujo
+      }
+    },
+    [toast, t],
+  );
+
+  const copyBlock = useCallback(
+    (block: NoteBlock) => void copyText(block.text),
+    [copyText],
+  );
+
+  const cutBlock = useCallback(
+    (block: NoteBlock) => {
+      void copyText(block.text);
+      removeBlock(block.id);
+    },
+    [copyText, removeBlock],
   );
 
   const onTextChange = useCallback(
@@ -142,50 +185,82 @@ export default function BlockEditor({ value, onChange }: BlockEditorProps) {
   );
 
   /**
-   * Envuelve (o desenvuelve) la selección del bloque enfocado en **negrita**.
-   * Funciona en cualquier tipo de bloque con texto.
+   * Botones de la toolbar: si hay un bloque enfocado, le cambia el tipo
+   * (texto ↔ lista ↔ cita…) conservando el texto. Si no hay foco, agrega
+   * uno nuevo. El separador siempre se inserta como bloque nuevo.
    */
-  const wrapBold = useCallback(() => {
-    const el = document.activeElement;
-    if (!(el instanceof HTMLTextAreaElement)) return;
-    let blockId: string | null = null;
-    inputRefs.current.forEach((node, id) => {
-      if (node === el) blockId = id;
-    });
-    if (!blockId) return;
-    const block = value.find((b) => b.id === blockId);
-    if (!block) return;
+  const applyType = useCallback(
+    (type: NoteBlockType) => {
+      const id = focusedId.current;
+      const focused = id ? value.find((b) => b.id === id) : null;
+      if (type !== "divider" && focused) {
+        patchBlock(focused.id, {
+          type,
+          ...(type === "check" ? { checked: false } : {}),
+        });
+        pendingFocus.current = focused.id;
+        return;
+      }
+      insertAfter(focused?.id ?? value[value.length - 1]?.id ?? null, type);
+    },
+    [value, patchBlock, insertAfter],
+  );
 
-    const s = el.selectionStart ?? 0;
-    const e = el.selectionEnd ?? 0;
-    const before = block.text.slice(0, s);
-    const sel = block.text.slice(s, e);
-    const after = block.text.slice(e);
-
-    // Si ya está en negrita, la quita
-    if (before.endsWith("**") && after.startsWith("**")) {
-      patchBlock(blockId, {
-        text: before.slice(0, -2) + sel + after.slice(2),
+  /**
+   * Envuelve (o desenvuelve) la selección del bloque enfocado con un marcador
+   * (`**` negrita, `_` itálica, `~~` tachado). Funciona en cualquier bloque.
+   */
+  const wrapMarker = useCallback(
+    (marker: string) => {
+      const el = document.activeElement;
+      if (!(el instanceof HTMLTextAreaElement)) return;
+      let blockId: string | null = null;
+      inputRefs.current.forEach((node, id) => {
+        if (node === el) blockId = id;
       });
+      if (!blockId) return;
+      const block = value.find((b) => b.id === blockId);
+      if (!block) return;
+
+      const len = marker.length;
+      const s = el.selectionStart ?? 0;
+      const e = el.selectionEnd ?? 0;
+      const before = block.text.slice(0, s);
+      const sel = block.text.slice(s, e);
+      const after = block.text.slice(e);
+
+      // Si la selección ya está envuelta, se desenvuelve
+      if (before.endsWith(marker) && after.startsWith(marker)) {
+        patchBlock(blockId, {
+          text: before.slice(0, -len) + sel + after.slice(len),
+        });
+        requestAnimationFrame(() => {
+          el.focus();
+          el.setSelectionRange(s - len, e - len);
+        });
+        return;
+      }
+
+      patchBlock(blockId, { text: `${before}${marker}${sel}${marker}${after}` });
       requestAnimationFrame(() => {
         el.focus();
-        el.setSelectionRange(s - 2, e - 2);
+        el.setSelectionRange(s + len, e + len);
       });
-      return;
-    }
-
-    patchBlock(blockId, { text: `${before}**${sel}**${after}` });
-    requestAnimationFrame(() => {
-      el.focus();
-      el.setSelectionRange(s + 2, e + 2);
-    });
-  }, [value, patchBlock]);
+    },
+    [value, patchBlock],
+  );
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>, block: NoteBlock) => {
-      if (e.key.toLowerCase() === "b" && (e.ctrlKey || e.metaKey)) {
+      const mod = e.ctrlKey || e.metaKey;
+      if (mod && e.key.toLowerCase() === "b") {
         e.preventDefault();
-        wrapBold();
+        wrapMarker("**");
+        return;
+      }
+      if (mod && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+        wrapMarker("_");
         return;
       }
       if (e.key === "Enter" && !e.shiftKey) {
@@ -204,7 +279,7 @@ export default function BlockEditor({ value, onChange }: BlockEditorProps) {
         removeBlock(block.id);
       }
     },
-    [insertAfter, removeBlock, patchBlock, wrapBold],
+    [insertAfter, removeBlock, patchBlock, wrapMarker],
   );
 
   const onDragEnd = useCallback(
@@ -246,26 +321,63 @@ export default function BlockEditor({ value, onChange }: BlockEditorProps) {
                 block={block}
                 numberIdx={block.type === "number" ? numberIndex(block.id) : 0}
                 inputRefs={inputRefs}
+                onFocusBlock={(id) => (focusedId.current = id)}
                 onTextChange={onTextChange}
                 onKeyDown={onKeyDown}
                 onToggleCheck={(b) => patchBlock(b.id, { checked: !b.checked })}
                 onRemove={removeBlock}
+                onCopy={copyBlock}
+                onCut={cutBlock}
                 placeholder={t("blockPlaceholder")}
                 removeLabel={t("removeBlock")}
+                copyLabel={t("copyBlock")}
+                cutLabel={t("cutBlock")}
+                moreLabel={t("moreActions")}
               />
             ))}
           </div>
         </SortableContext>
       </DndContext>
 
-      <div className="block-editor__toolbar">
+      <button
+        type="button"
+        className="block-editor__add"
+        onClick={() =>
+          insertAfter(value[value.length - 1]?.id ?? null, "text")
+        }
+      >
+        <AddRoundedIcon />
+        {t("addText")}
+      </button>
+
+      <div
+        className={`block-editor__toolbar ${
+          stickyToolbar ? "block-editor__toolbar--sticky" : ""
+        }`}
+      >
         <IconButton
           label={`${t("bold")} (Ctrl+B)`}
           size="sm"
           onMouseDown={(e) => e.preventDefault()}
-          onClick={wrapBold}
+          onClick={() => wrapMarker("**")}
         >
           <FormatBoldRoundedIcon />
+        </IconButton>
+        <IconButton
+          label={`${t("italic")} (Ctrl+I)`}
+          size="sm"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => wrapMarker("_")}
+        >
+          <FormatItalicRoundedIcon />
+        </IconButton>
+        <IconButton
+          label={t("strike")}
+          size="sm"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => wrapMarker("~~")}
+        >
+          <StrikethroughSRoundedIcon />
         </IconButton>
         <span className="block-editor__toolbar-sep" />
         <span className="block-editor__toolbar-label">{t("addBlock")}</span>
@@ -274,9 +386,8 @@ export default function BlockEditor({ value, onChange }: BlockEditorProps) {
             key={type}
             label={t(`block_${type}`)}
             size="sm"
-            onClick={() =>
-              insertAfter(value[value.length - 1]?.id ?? null, type)
-            }
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => applyType(type)}
           >
             {icon}
           </IconButton>
@@ -291,6 +402,7 @@ interface BlockRowProps {
   block: NoteBlock;
   numberIdx: number;
   inputRefs: React.RefObject<Map<string, HTMLTextAreaElement>>;
+  onFocusBlock: (id: string) => void;
   onTextChange: (block: NoteBlock, value: string) => void;
   onKeyDown: (
     e: React.KeyboardEvent<HTMLTextAreaElement>,
@@ -298,20 +410,31 @@ interface BlockRowProps {
   ) => void;
   onToggleCheck: (block: NoteBlock) => void;
   onRemove: (id: string) => void;
+  onCopy: (block: NoteBlock) => void;
+  onCut: (block: NoteBlock) => void;
   placeholder: string;
   removeLabel: string;
+  copyLabel: string;
+  cutLabel: string;
+  moreLabel: string;
 }
 
 function BlockRow({
   block,
   numberIdx,
   inputRefs,
+  onFocusBlock,
   onTextChange,
   onKeyDown,
   onToggleCheck,
   onRemove,
+  onCopy,
+  onCut,
   placeholder,
   removeLabel,
+  copyLabel,
+  cutLabel,
+  moreLabel,
 }: BlockRowProps) {
   const {
     attributes,
@@ -333,6 +456,8 @@ function BlockRow({
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
   };
+
+  const isDivider = block.type === "divider";
 
   return (
     <div
@@ -367,7 +492,7 @@ function BlockRow({
       )}
       {block.type === "quote" && <span className="block-editor__quote-bar" />}
 
-      {block.type === "divider" ? (
+      {isDivider ? (
         <hr className="block-editor__divider" />
       ) : (
         <textarea
@@ -387,6 +512,7 @@ function BlockRow({
           value={block.text}
           rows={1}
           placeholder={placeholder}
+          onFocus={() => onFocusBlock(block.id)}
           onChange={(e) => {
             onTextChange(block, e.target.value);
             autoGrow(e.target);
@@ -395,16 +521,34 @@ function BlockRow({
         />
       )}
 
-      <button
-        type="button"
-        className="block-editor__remove"
-        onClick={() => onRemove(block.id)}
-        aria-label={removeLabel}
-        title={removeLabel}
-        tabIndex={-1}
-      >
-        <DeleteOutlineRoundedIcon />
-      </button>
+      <div className="block-editor__actions">
+        <ActionMenu
+          label={moreLabel}
+          className="block-editor__menu-btn"
+          items={[
+            ...(isDivider
+              ? []
+              : [
+                  {
+                    label: copyLabel,
+                    icon: <ContentCopyRoundedIcon />,
+                    onClick: () => onCopy(block),
+                  },
+                  {
+                    label: cutLabel,
+                    icon: <ContentCutRoundedIcon />,
+                    onClick: () => onCut(block),
+                  },
+                ]),
+            {
+              label: removeLabel,
+              icon: <DeleteOutlineRoundedIcon />,
+              onClick: () => onRemove(block.id),
+              danger: true,
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }
