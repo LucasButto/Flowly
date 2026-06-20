@@ -183,11 +183,11 @@ export default function DashboardPage() {
               {t("viewAll")} <ArrowForwardRoundedIcon />
             </Link>
           </div>
-          {todayRoutines.length === 0 ? (
+          {activeTodayRoutines.length === 0 ? (
             <EmptyState title={t("nothingToday")} compact />
           ) : (
             <div className="dashboard__routines">
-              {todayRoutines.slice(0, 4).map((r) => (
+              {activeTodayRoutines.slice(0, 4).map((r) => (
                 <RoutineCard
                   key={r.id}
                   routine={r}
