@@ -253,27 +253,48 @@ export default function BlockEditor({
       const len = marker.length;
       const s = el.selectionStart ?? 0;
       const e = el.selectionEnd ?? 0;
-      const before = block.text.slice(0, s);
-      const sel = block.text.slice(s, e);
-      const after = block.text.slice(e);
+      const text = block.text;
 
-      // Si la selección ya está envuelta, se desenvuelve
-      if (before.endsWith(marker) && after.startsWith(marker)) {
-        patchBlock(blockId, {
-          text: before.slice(0, -len) + sel + after.slice(len),
-        });
+      const reselect = (a: number, b: number) =>
         requestAnimationFrame(() => {
           el.focus();
-          el.setSelectionRange(s - len, e - len);
+          el.setSelectionRange(a, b);
         });
+
+      // Normalizar: recortar los marcadores que el usuario haya incluido dentro
+      // de la selección. El "_" (itálica) cuenta como carácter de palabra, así
+      // que al seleccionar/doble-clickear puede agarrar uno o ambos `_`; esto
+      // detecta el formato igual, agarre 0, 1 o 2 marcadores.
+      let start = s;
+      let end = e;
+      if (end - start >= 2 * len && text.slice(start, start + len) === marker)
+        start += len;
+      if (end - start >= len && text.slice(end - len, end) === marker)
+        end -= len;
+
+      // ¿El contenido [start, end) ya está envuelto por el marcador?
+      const wrapped =
+        start >= len &&
+        text.slice(start - len, start) === marker &&
+        text.slice(end, end + len) === marker;
+
+      if (wrapped) {
+        patchBlock(blockId, {
+          text:
+            text.slice(0, start - len) +
+            text.slice(start, end) +
+            text.slice(end + len),
+        });
+        reselect(start - len, end - len);
         return;
       }
 
-      patchBlock(blockId, { text: `${before}${marker}${sel}${marker}${after}` });
-      requestAnimationFrame(() => {
-        el.focus();
-        el.setSelectionRange(s + len, e + len);
+      // Envolver exactamente lo que se seleccionó
+      patchBlock(blockId, {
+        text:
+          text.slice(0, s) + marker + text.slice(s, e) + marker + text.slice(e),
       });
+      reselect(s + len, e + len);
     },
     [patchBlock],
   );
@@ -468,6 +489,14 @@ export default function BlockEditor({
           onClick={() => wrapMarker("~~")}
         >
           <StrikethroughSRoundedIcon />
+        </IconButton>
+        <IconButton
+          label={t("code")}
+          size="sm"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => wrapMarker("`")}
+        >
+          <CodeRoundedIcon />
         </IconButton>
         <span className="block-editor__toolbar-sep" />
         <span className="block-editor__toolbar-label">{t("addBlock")}</span>
