@@ -1,5 +1,12 @@
 "use client";
-import { useEffect, useRef, useCallback, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+  useState,
+  memo,
+} from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import {
@@ -42,6 +49,13 @@ import { newBlock } from "@/utils/blocks";
 import { caretViewportRect } from "@/utils/textareaCaret";
 import type { NoteBlock, NoteBlockType } from "@/types/blocks";
 import "./BlockEditor.scss";
+
+/** Ajusta la altura del textarea a su contenido (provoca un reflow puntual). */
+function autoGrow(el: HTMLTextAreaElement | null) {
+  if (!el) return;
+  el.style.height = "auto";
+  el.style.height = `${el.scrollHeight}px`;
+}
 
 const BLOCK_TYPES: { type: NoteBlockType; icon: React.ReactNode }[] = [
   { type: "text", icon: <TextFieldsRoundedIcon /> },
@@ -88,6 +102,17 @@ export default function BlockEditor({
   const pendingFocus = useRef<string | null>(null);
   const focusedId = useRef<string | null>(null);
 
+  // Refs al último value/onChange para que los callbacks sean estables
+  // (identidad fija) y el memo de cada fila pueda saltarse re-renders.
+  const valueRef = useRef(value);
+  valueRef.current = value;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const tRef = useRef(t);
+  tRef.current = t;
+  const toastRef = useRef(toast);
+  toastRef.current = toast;
+
   // Enfocar el bloque recién creado / convertido
   useEffect(() => {
     if (!pendingFocus.current) return;
@@ -107,54 +132,53 @@ export default function BlockEditor({
     }),
   );
 
-  const patchBlock = useCallback(
-    (id: string, patch: Partial<NoteBlock>) => {
-      onChange(value.map((b) => (b.id === id ? { ...b, ...patch } : b)));
-    },
-    [value, onChange],
-  );
+  const patchBlock = useCallback((id: string, patch: Partial<NoteBlock>) => {
+    onChangeRef.current(
+      valueRef.current.map((b) => (b.id === id ? { ...b, ...patch } : b)),
+    );
+  }, []);
 
   const insertAfter = useCallback(
     (id: string | null, type: NoteBlockType) => {
+      const value = valueRef.current;
       const block = newBlock(type);
       pendingFocus.current = type === "divider" ? null : block.id;
       if (id === null) {
-        onChange([...value, block]);
+        onChangeRef.current([...value, block]);
         return;
       }
       const i = value.findIndex((b) => b.id === id);
-      onChange([...value.slice(0, i + 1), block, ...value.slice(i + 1)]);
+      onChangeRef.current([
+        ...value.slice(0, i + 1),
+        block,
+        ...value.slice(i + 1),
+      ]);
     },
-    [value, onChange],
+    [],
   );
 
-  const removeBlock = useCallback(
-    (id: string) => {
-      if (focusedId.current === id) focusedId.current = null;
-      if (value.length <= 1) {
-        onChange([newBlock()]);
-        return;
-      }
-      const i = value.findIndex((b) => b.id === id);
-      const before = value[i - 1];
-      if (before && before.type !== "divider") pendingFocus.current = before.id;
-      onChange(value.filter((b) => b.id !== id));
-    },
-    [value, onChange],
-  );
+  const removeBlock = useCallback((id: string) => {
+    const value = valueRef.current;
+    if (focusedId.current === id) focusedId.current = null;
+    if (value.length <= 1) {
+      onChangeRef.current([newBlock()]);
+      return;
+    }
+    const i = value.findIndex((b) => b.id === id);
+    const before = value[i - 1];
+    if (before && before.type !== "divider") pendingFocus.current = before.id;
+    onChangeRef.current(value.filter((b) => b.id !== id));
+  }, []);
 
   // ─── Copiar / cortar al portapapeles ───
-  const copyText = useCallback(
-    async (text: string) => {
-      try {
-        await navigator.clipboard.writeText(text);
-        toast(t("copied"), "success");
-      } catch {
-        // entorno sin permiso de clipboard: no rompemos el flujo
-      }
-    },
-    [toast, t],
-  );
+  const copyText = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toastRef.current(tRef.current("copied"), "success");
+    } catch {
+      // entorno sin permiso de clipboard: no rompemos el flujo
+    }
+  }, []);
 
   const copyBlock = useCallback(
     (block: NoteBlock) => void copyText(block.text),
@@ -194,6 +218,7 @@ export default function BlockEditor({
    */
   const applyType = useCallback(
     (type: NoteBlockType) => {
+      const value = valueRef.current;
       const id = focusedId.current;
       const focused = id ? value.find((b) => b.id === id) : null;
       if (type !== "divider" && focused) {
@@ -206,7 +231,7 @@ export default function BlockEditor({
       }
       insertAfter(focused?.id ?? value[value.length - 1]?.id ?? null, type);
     },
-    [value, patchBlock, insertAfter],
+    [patchBlock, insertAfter],
   );
 
   /**
@@ -222,7 +247,7 @@ export default function BlockEditor({
         if (node === el) blockId = id;
       });
       if (!blockId) return;
-      const block = value.find((b) => b.id === blockId);
+      const block = valueRef.current.find((b) => b.id === blockId);
       if (!block) return;
 
       const len = marker.length;
@@ -250,7 +275,7 @@ export default function BlockEditor({
         el.setSelectionRange(s + len, e + len);
       });
     },
-    [value, patchBlock],
+    [patchBlock],
   );
 
   // ─── Burbuja de formato sobre la selección (estilo WhatsApp) ───
@@ -340,15 +365,22 @@ export default function BlockEditor({
     [insertAfter, removeBlock, patchBlock, wrapMarker],
   );
 
-  const onDragEnd = useCallback(
-    (e: DragEndEvent) => {
-      const { active, over } = e;
-      if (!over || active.id === over.id) return;
-      const oldIndex = value.findIndex((b) => b.id === active.id);
-      const newIndex = value.findIndex((b) => b.id === over.id);
-      onChange(arrayMove(value, oldIndex, newIndex));
-    },
-    [value, onChange],
+  const onDragEnd = useCallback((e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    const value = valueRef.current;
+    const oldIndex = value.findIndex((b) => b.id === active.id);
+    const newIndex = value.findIndex((b) => b.id === over.id);
+    onChangeRef.current(arrayMove(value, oldIndex, newIndex));
+  }, []);
+
+  // Callbacks estables para las filas (no rompen el memo de BlockRow)
+  const handleFocusBlock = useCallback((id: string) => {
+    focusedId.current = id;
+  }, []);
+  const handleToggleCheck = useCallback(
+    (b: NoteBlock) => patchBlock(b.id, { checked: !b.checked }),
+    [patchBlock],
   );
 
   // Índices de listas numeradas (consecutivos)
@@ -379,10 +411,10 @@ export default function BlockEditor({
                 block={block}
                 numberIdx={block.type === "number" ? numberIndex(block.id) : 0}
                 inputRefs={inputRefs}
-                onFocusBlock={(id) => (focusedId.current = id)}
+                onFocusBlock={handleFocusBlock}
                 onTextChange={onTextChange}
                 onKeyDown={onKeyDown}
-                onToggleCheck={(b) => patchBlock(b.id, { checked: !b.checked })}
+                onToggleCheck={handleToggleCheck}
                 onRemove={removeBlock}
                 onCopy={copyBlock}
                 onCut={cutBlock}
@@ -534,7 +566,7 @@ interface BlockRowProps {
   moreLabel: string;
 }
 
-function BlockRow({
+const BlockRow = memo(function BlockRow({
   block,
   numberIdx,
   inputRefs,
@@ -566,11 +598,23 @@ function BlockRow({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const autoGrow = (el: HTMLTextAreaElement | null) => {
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  };
+  const taRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // ref estable: sólo registra/limpia el nodo (no fuerza reflow en cada render)
+  const setTextarea = useCallback(
+    (el: HTMLTextAreaElement | null) => {
+      taRef.current = el;
+      if (el) inputRefs.current.set(block.id, el);
+      else inputRefs.current.delete(block.id);
+    },
+    [block.id, inputRefs],
+  );
+
+  // Ajustar la altura sólo cuando cambia el texto/tipo (un reflow por bloque
+  // afectado, no por cada tecla en todos los bloques).
+  useLayoutEffect(() => {
+    autoGrow(taRef.current);
+  }, [block.text, block.type]);
 
   const isDivider = block.type === "divider";
 
@@ -611,14 +655,7 @@ function BlockRow({
         <hr className="block-editor__divider" />
       ) : (
         <textarea
-          ref={(el) => {
-            if (el) {
-              inputRefs.current.set(block.id, el);
-              autoGrow(el);
-            } else {
-              inputRefs.current.delete(block.id);
-            }
-          }}
+          ref={setTextarea}
           className={`block-editor__input ${
             block.type === "check" && block.checked
               ? "block-editor__input--done"
@@ -628,10 +665,7 @@ function BlockRow({
           rows={1}
           placeholder={placeholder}
           onFocus={() => onFocusBlock(block.id)}
-          onChange={(e) => {
-            onTextChange(block, e.target.value);
-            autoGrow(e.target);
-          }}
+          onChange={(e) => onTextChange(block, e.target.value)}
           onKeyDown={(e) => onKeyDown(e, block)}
         />
       )}
@@ -666,4 +700,4 @@ function BlockRow({
       </div>
     </div>
   );
-}
+});
