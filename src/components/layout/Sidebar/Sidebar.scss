@@ -218,8 +218,7 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.55);
     z-index: 150;
     opacity: 0;
     pointer-events: none;
@@ -247,9 +246,7 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0 0.75rem;
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
+  background: var(--bg-elevated);
   border-bottom: 1px solid var(--border);
   z-index: 100;
 

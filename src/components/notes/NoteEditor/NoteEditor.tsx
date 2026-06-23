@@ -84,19 +84,26 @@ export default function NoteEditor({ open, note, onClose }: NoteEditorProps) {
     <Modal
       open={open}
       onClose={onClose}
-      title={note ? t("editNote") : t("newNote")}
+      title={
+        <span className="note-editor__heading">
+          {note ? t("editNote") : t("newNote")}
+          <IconButton
+            label={pinned ? t("unpin") : t("pin")}
+            size="sm"
+            onClick={() => setPinned((p) => !p)}
+            className={`note-editor__pin ${
+              pinned ? "note-editor__pin--on" : ""
+            }`}
+          >
+            {pinned ? <PushPinRoundedIcon /> : <PushPinOutlinedIcon />}
+          </IconButton>
+        </span>
+      }
       size="lg"
       footer={
         <div className="note-editor__footer">
           <div className="note-editor__footer-left">
             <ColorPicker value={color} onChange={setColor} />
-            <IconButton
-              label={pinned ? t("unpin") : t("pin")}
-              onClick={() => setPinned((p) => !p)}
-              className={pinned ? "note-editor__pin--on" : ""}
-            >
-              {pinned ? <PushPinRoundedIcon /> : <PushPinOutlinedIcon />}
-            </IconButton>
           </div>
           <div className="note-editor__footer-actions">
             <Button variant="ghost" onClick={onClose} disabled={saving}>

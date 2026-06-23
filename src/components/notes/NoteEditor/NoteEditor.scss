@@ -5,6 +5,20 @@
   flex-direction: column;
   gap: 0.6rem;
 
+  // Título del modal + botón de fijar al lado (no ocupa una línea en el footer)
+  &__heading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  &__pin {
+    color: var(--text-muted);
+    &--on {
+      color: var(--brand);
+    }
+  }
+
   &__title {
     width: 100%;
     background: transparent;
@@ -57,9 +71,5 @@
     display: flex;
     gap: 0.5rem;
     margin-left: auto;
-  }
-
-  &__pin--on {
-    color: var(--brand);
   }
 }

@@ -15,7 +15,7 @@
     display: flex;
     align-items: flex-start;
     gap: 0.35rem;
-    padding: 1px 0;
+    padding: 1px 0 1px 0.6rem;
     border-radius: $radius-sm;
     transition: background 0.12s ease;
 
@@ -248,5 +248,42 @@
     height: 1.1rem;
     background: var(--border-strong);
     margin: 0 0.35rem;
+  }
+
+  // ─── Burbuja de formato sobre la selección (estilo WhatsApp) ───
+  &__bubble {
+    position: fixed;
+    z-index: 1300;
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: $radius;
+    box-shadow: 0 8px 24px var(--shadow);
+    animation: scaleIn 0.1s ease;
+  }
+
+  &__bubble-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: $radius-sm;
+    color: var(--text-secondary);
+    transition:
+      background 0.12s ease,
+      color 0.12s ease;
+
+    &:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    svg {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
   }
 }

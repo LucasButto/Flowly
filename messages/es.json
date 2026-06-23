@@ -374,6 +374,7 @@
     "bold": "Negrita",
     "italic": "Itálica",
     "strike": "Tachado",
+    "code": "Monoespaciado",
     "block_text": "Texto",
     "block_h1": "Título",
     "block_h2": "Subtítulo",
