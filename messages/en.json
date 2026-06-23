@@ -374,6 +374,7 @@
     "bold": "Bold",
     "italic": "Italic",
     "strike": "Strikethrough",
+    "code": "Monospace",
     "block_text": "Text",
     "block_h1": "Heading",
     "block_h2": "Subheading",

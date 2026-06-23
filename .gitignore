@@ -31,3 +31,8 @@ next-env.d.ts
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# claude code / agentes
+.claude/
+AGENTS.md
+CLAUDE.md

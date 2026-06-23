@@ -101,4 +101,14 @@
       opacity: 0.85;
     }
   }
+
+  &__code {
+    font-family: $font-mono;
+    font-size: 0.85em;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.05em 0.35em;
+    word-break: break-all;
+  }
 }

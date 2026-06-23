@@ -11,6 +11,15 @@ interface InlineRule {
 // Reglas inline. Se elige siempre el match más temprano del texto.
 const INLINE_RULES: InlineRule[] = [
   {
+    // `monoespaciado` (contenido literal, sin formato anidado)
+    re: /`([^`]+?)`/,
+    render: (m, k) => (
+      <code key={k} className="blocks-view__code">
+        {m[1]}
+      </code>
+    ),
+  },
+  {
     // **negrita**
     re: /\*\*([^*]+?)\*\*/,
     render: (m, k) => <strong key={k}>{parseInline(m[1] ?? "", k)}</strong>,

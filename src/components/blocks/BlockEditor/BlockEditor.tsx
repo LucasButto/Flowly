@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import {
   DndContext,
@@ -28,6 +29,7 @@ import ContentCutRoundedIcon from "@mui/icons-material/ContentCutRounded";
 import FormatBoldRoundedIcon from "@mui/icons-material/FormatBoldRounded";
 import FormatItalicRoundedIcon from "@mui/icons-material/FormatItalicRounded";
 import StrikethroughSRoundedIcon from "@mui/icons-material/StrikethroughSRounded";
+import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import TextFieldsRoundedIcon from "@mui/icons-material/TextFieldsRounded";
 import TitleRoundedIcon from "@mui/icons-material/TitleRounded";
@@ -37,6 +39,7 @@ import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
 import FormatQuoteRoundedIcon from "@mui/icons-material/FormatQuoteRounded";
 import HorizontalRuleRoundedIcon from "@mui/icons-material/HorizontalRuleRounded";
 import { newBlock } from "@/utils/blocks";
+import { caretViewportRect } from "@/utils/textareaCaret";
 import type { NoteBlock, NoteBlockType } from "@/types/blocks";
 import "./BlockEditor.scss";
 
@@ -250,6 +253,61 @@ export default function BlockEditor({
     [value, patchBlock],
   );
 
+  // ─── Burbuja de formato sobre la selección (estilo WhatsApp) ───
+  const [bubble, setBubble] = useState<{
+    x: number;
+    y: number;
+    placement: "top" | "bottom";
+  } | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const updateBubble = useCallback(() => {
+    const el = document.activeElement;
+    if (!(el instanceof HTMLTextAreaElement)) {
+      setBubble(null);
+      return;
+    }
+    // ¿Es un textarea de un bloque?
+    let isBlock = false;
+    inputRefs.current.forEach((node) => {
+      if (node === el) isBlock = true;
+    });
+    const s = el.selectionStart ?? 0;
+    const e = el.selectionEnd ?? 0;
+    if (!isBlock || s === e) {
+      setBubble(null);
+      return;
+    }
+    const start = caretViewportRect(el, s);
+    const end = caretViewportRect(el, e);
+    const sameLine = Math.abs(start.top - end.top) < 2;
+    const centerX = sameLine ? (start.left + end.left) / 2 : start.left;
+    const x = Math.min(Math.max(centerX, 96), window.innerWidth - 96);
+    const above = start.top > 70;
+    setBubble({
+      x,
+      y: above ? start.top - 8 : end.top + end.height + 8,
+      placement: above ? "top" : "bottom",
+    });
+  }, []);
+
+  const scheduleBubble = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(updateBubble);
+  }, [updateBubble]);
+
+  useEffect(() => {
+    document.addEventListener("selectionchange", scheduleBubble);
+    window.addEventListener("scroll", scheduleBubble, true);
+    window.addEventListener("resize", scheduleBubble);
+    return () => {
+      document.removeEventListener("selectionchange", scheduleBubble);
+      window.removeEventListener("scroll", scheduleBubble, true);
+      window.removeEventListener("resize", scheduleBubble);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [scheduleBubble]);
+
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>, block: NoteBlock) => {
       const mod = e.ctrlKey || e.metaKey;
@@ -393,6 +451,63 @@ export default function BlockEditor({
           </IconButton>
         ))}
       </div>
+
+      {/* Burbuja de formato sobre el texto seleccionado */}
+      {bubble &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="block-editor__bubble"
+            style={{
+              left: bubble.x,
+              top: bubble.y,
+              transform:
+                bubble.placement === "top"
+                  ? "translate(-50%, -100%)"
+                  : "translate(-50%, 0)",
+            }}
+            // No robar el foco/selección del textarea al interactuar
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            <button
+              type="button"
+              className="block-editor__bubble-btn"
+              onClick={() => wrapMarker("**")}
+              aria-label={t("bold")}
+              title={t("bold")}
+            >
+              <FormatBoldRoundedIcon />
+            </button>
+            <button
+              type="button"
+              className="block-editor__bubble-btn"
+              onClick={() => wrapMarker("_")}
+              aria-label={t("italic")}
+              title={t("italic")}
+            >
+              <FormatItalicRoundedIcon />
+            </button>
+            <button
+              type="button"
+              className="block-editor__bubble-btn"
+              onClick={() => wrapMarker("~~")}
+              aria-label={t("strike")}
+              title={t("strike")}
+            >
+              <StrikethroughSRoundedIcon />
+            </button>
+            <button
+              type="button"
+              className="block-editor__bubble-btn"
+              onClick={() => wrapMarker("`")}
+              aria-label={t("code")}
+              title={t("code")}
+            >
+              <CodeRoundedIcon />
+            </button>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
