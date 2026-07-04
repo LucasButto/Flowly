@@ -167,6 +167,23 @@ export async function fetchGoogleEvents(
   return (data.items ?? []).filter((e) => e.status !== "cancelled");
 }
 
+/**
+ * Devuelve true si el evento sigue existiendo en Google Calendar.
+ * Un evento borrado responde 404/410, o llega con status "cancelled".
+ */
+export async function googleEventExists(
+  token: string,
+  eventId: string,
+): Promise<boolean> {
+  const res = await fetch(`${API}/${encodeURIComponent(eventId)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status === 404 || res.status === 410) return false;
+  if (!res.ok) throw new Error(`Google Calendar API ${res.status}`);
+  const data = (await res.json()) as { status?: string };
+  return data.status !== "cancelled";
+}
+
 export async function pushGoogleEvent(
   token: string,
   body: GoogleEventBody,
