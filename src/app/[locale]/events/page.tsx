@@ -21,10 +21,11 @@ import SegmentedControl from "@/components/ui/SegmentedControl/SegmentedControl"
 import { EventsSkeleton } from "@/components/skeletons/Skeletons";
 import ConfirmDialog from "@/components/ui/ConfirmDialog/ConfirmDialog";
 import Modal from "@/components/ui/Modal/Modal";
+import MapLink from "@/components/ui/MapLink/MapLink";
+import { RichText } from "@/components/blocks/BlockContent/BlockContent";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import CloudDownloadRoundedIcon from "@mui/icons-material/CloudDownloadRounded";
@@ -47,11 +48,13 @@ export default function EventsPage() {
     removeEvent,
     importFromGoogle,
     exportToGoogle,
+    exportOneToGoogle,
   } = useEvents();
 
   const [view, setView] = useState<View>("month");
   const [googleOpen, setGoogleOpen] = useState(false);
   const [syncing, setSyncing] = useState<"import" | "export" | null>(null);
+  const [exportingOne, setExportingOne] = useState(false);
 
   const runSync = async (mode: "import" | "export") => {
     setSyncing(mode);
@@ -159,6 +162,29 @@ export default function EventsPage() {
   const openDetail = (ev: FlowEvent, date: string) => {
     setDetail(ev);
     setDetailDate(date);
+  };
+
+  // Exporta solo el evento del detalle a Google Calendar
+  const handleExportOne = async () => {
+    if (!detail) return;
+    setExportingOne(true);
+    try {
+      const result = await exportOneToGoogle(detail);
+      if (result === "exists") toast(t("googleAlreadyExists"), "info");
+      else toast(t("googleExportedOne"), "success");
+      setDetail(null);
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      if (
+        code !== "auth/popup-closed-by-user" &&
+        code !== "auth/cancelled-popup-request"
+      ) {
+        console.error(err);
+        toast(t("googleError"), "error");
+      }
+    } finally {
+      setExportingOne(false);
+    }
   };
 
   // Editar/eliminar desde el detalle: si es recurrente, preguntar el alcance
@@ -350,12 +376,12 @@ export default function EventsPage() {
                 : ` · ${t("allDay")}`}
             </p>
             {detail.location && (
-              <p className="events__detail-loc">
-                <PlaceRoundedIcon /> {detail.location}
-              </p>
+              <MapLink location={detail.location} showOpenIcon />
             )}
             {detail.description && (
-              <p className="events__detail-desc">{detail.description}</p>
+              <p className="events__detail-desc">
+                <RichText text={detail.description} />
+              </p>
             )}
             {detail.tags.length > 0 && (
               <div className="events__detail-tags">
@@ -366,6 +392,18 @@ export default function EventsPage() {
                 ))}
               </div>
             )}
+            <Button
+              variant="secondary"
+              fullWidth
+              loading={exportingOne}
+              icon={
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src="/google-icon.svg" alt="" width={18} height={18} />
+              }
+              onClick={handleExportOne}
+            >
+              {t("googleExportOne")}
+            </Button>
           </div>
         )}
       </Modal>
