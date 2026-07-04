@@ -155,6 +155,10 @@
     @include line-clamp(2);
   }
 
+  &__loc.fl-maplink {
+    font-size: 0.8rem;
+  }
+
   &__stats {
     display: flex;
     align-items: center;

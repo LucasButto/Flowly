@@ -44,7 +44,10 @@ import FormatListBulletedRoundedIcon from "@mui/icons-material/FormatListBullete
 import FormatListNumberedRoundedIcon from "@mui/icons-material/FormatListNumberedRounded";
 import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
 import FormatQuoteRoundedIcon from "@mui/icons-material/FormatQuoteRounded";
+import PlaceRoundedIcon from "@mui/icons-material/PlaceRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import HorizontalRuleRoundedIcon from "@mui/icons-material/HorizontalRuleRounded";
+import MapEmbed from "@/components/ui/MapEmbed/MapEmbed";
 import { newBlock } from "@/utils/blocks";
 import { caretViewportRect } from "@/utils/textareaCaret";
 import type { NoteBlock, NoteBlockType } from "@/types/blocks";
@@ -57,6 +60,18 @@ function autoGrow(el: HTMLTextAreaElement | null) {
   el.style.height = `${el.scrollHeight}px`;
 }
 
+/** Primer ancestro scrolleable (para seguir el caret al escribir en mobile). */
+function getScrollParent(node: HTMLElement | null): HTMLElement | null {
+  let el = node?.parentElement ?? null;
+  while (el) {
+    const oy = getComputedStyle(el).overflowY;
+    if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight)
+      return el;
+    el = el.parentElement;
+  }
+  return null;
+}
+
 const BLOCK_TYPES: { type: NoteBlockType; icon: React.ReactNode }[] = [
   { type: "text", icon: <TextFieldsRoundedIcon /> },
   { type: "h1", icon: <TitleRoundedIcon /> },
@@ -65,6 +80,7 @@ const BLOCK_TYPES: { type: NoteBlockType; icon: React.ReactNode }[] = [
   { type: "number", icon: <FormatListNumberedRoundedIcon /> },
   { type: "check", icon: <ChecklistRoundedIcon /> },
   { type: "quote", icon: <FormatQuoteRoundedIcon /> },
+  { type: "location", icon: <PlaceRoundedIcon /> },
   { type: "divider", icon: <HorizontalRuleRoundedIcon /> },
 ];
 
@@ -96,6 +112,7 @@ export default function BlockEditor({
   stickyToolbar = false,
 }: BlockEditorProps) {
   const t = useTranslations("notes");
+  const tc = useTranslations("common");
   const toast = useToast();
 
   const inputRefs = useRef(new Map<string, HTMLTextAreaElement>());
@@ -113,6 +130,44 @@ export default function BlockEditor({
   const toastRef = useRef(toast);
   toastRef.current = toast;
 
+  /**
+   * Al escribir en mobile, mantiene el caret visible por encima de la toolbar
+   * fija (o del teclado): si la línea actual queda tapada, scrollea el
+   * contenedor lo justo para seguir viendo lo que se escribe.
+   */
+  const keepCaretVisible = useCallback(() => {
+    const el = document.activeElement;
+    if (!(el instanceof HTMLTextAreaElement)) return;
+    let isBlock = false;
+    inputRefs.current.forEach((n) => {
+      if (n === el) isBlock = true;
+    });
+    if (!isBlock) return;
+
+    const caret = caretViewportRect(el, el.selectionStart ?? el.value.length);
+    const caretBottom = caret.top + caret.height;
+
+    const toolbar = el
+      .closest(".block-editor")
+      ?.querySelector<HTMLElement>(".block-editor__toolbar--sticky");
+    const tRect = toolbar?.getBoundingClientRect();
+    let safeBottom: number;
+    if (tRect && tRect.height > 0) {
+      safeBottom = tRect.top;
+    } else {
+      const vv = window.visualViewport;
+      safeBottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
+    }
+    safeBottom -= 16; // margen para ver la línea completa
+
+    const overflow = caretBottom - safeBottom;
+    if (overflow > 4) {
+      const sc = getScrollParent(el);
+      if (sc) sc.scrollTop += overflow;
+      else window.scrollBy(0, overflow);
+    }
+  }, []);
+
   // Enfocar el bloque recién creado / convertido
   useEffect(() => {
     if (!pendingFocus.current) return;
@@ -120,9 +175,10 @@ export default function BlockEditor({
     if (el) {
       el.focus();
       el.selectionStart = el.value.length;
+      requestAnimationFrame(keepCaretVisible);
     }
     pendingFocus.current = null;
-  }, [value]);
+  }, [value, keepCaretVisible]);
 
   // Se arrastra solo desde el asa (grip), para no pisar la selección de texto.
   const sensors = useSensors(
@@ -435,11 +491,16 @@ export default function BlockEditor({
                 onFocusBlock={handleFocusBlock}
                 onTextChange={onTextChange}
                 onKeyDown={onKeyDown}
+                onCaretKeep={keepCaretVisible}
                 onToggleCheck={handleToggleCheck}
                 onRemove={removeBlock}
                 onCopy={copyBlock}
                 onCut={cutBlock}
-                placeholder={t("blockPlaceholder")}
+                placeholder={
+                  block.type === "location"
+                    ? tc("locationPlaceholder")
+                    : t("blockPlaceholder")
+                }
                 removeLabel={t("removeBlock")}
                 copyLabel={t("copyBlock")}
                 cutLabel={t("cutBlock")}
@@ -584,6 +645,7 @@ interface BlockRowProps {
     e: React.KeyboardEvent<HTMLTextAreaElement>,
     block: NoteBlock,
   ) => void;
+  onCaretKeep: () => void;
   onToggleCheck: (block: NoteBlock) => void;
   onRemove: (id: string) => void;
   onCopy: (block: NoteBlock) => void;
@@ -602,6 +664,7 @@ const BlockRow = memo(function BlockRow({
   onFocusBlock,
   onTextChange,
   onKeyDown,
+  onCaretKeep,
   onToggleCheck,
   onRemove,
   onCopy,
@@ -640,12 +703,33 @@ const BlockRow = memo(function BlockRow({
   );
 
   // Ajustar la altura sólo cuando cambia el texto/tipo (un reflow por bloque
-  // afectado, no por cada tecla en todos los bloques).
+  // afectado, no por cada tecla en todos los bloques). Si este bloque tiene el
+  // foco, mantener el caret visible tras crecer (sigue el scroll al escribir).
   useLayoutEffect(() => {
     autoGrow(taRef.current);
-  }, [block.text, block.type]);
+    if (taRef.current && document.activeElement === taRef.current) {
+      onCaretKeep();
+    }
+  }, [block.text, block.type, onCaretKeep]);
 
   const isDivider = block.type === "divider";
+
+  const textareaEl = (
+    <textarea
+      ref={setTextarea}
+      className={`block-editor__input ${
+        block.type === "check" && block.checked
+          ? "block-editor__input--done"
+          : ""
+      }`}
+      value={block.text}
+      rows={1}
+      placeholder={placeholder}
+      onFocus={() => onFocusBlock(block.id)}
+      onChange={(e) => onTextChange(block, e.target.value)}
+      onKeyDown={(e) => onKeyDown(e, block)}
+    />
+  );
 
   return (
     <div
@@ -682,21 +766,27 @@ const BlockRow = memo(function BlockRow({
 
       {isDivider ? (
         <hr className="block-editor__divider" />
+      ) : block.type === "location" ? (
+        <div className="block-editor__loc-body">
+          <div className="block-editor__loc-search">
+            <PlaceRoundedIcon
+              className="block-editor__loc-pin"
+              aria-hidden="true"
+            />
+            {textareaEl}
+            <SearchRoundedIcon
+              className="block-editor__loc-lupa"
+              aria-hidden="true"
+            />
+          </div>
+          <MapEmbed
+            location={block.text}
+            debounceMs={700}
+            className="block-editor__row-map"
+          />
+        </div>
       ) : (
-        <textarea
-          ref={setTextarea}
-          className={`block-editor__input ${
-            block.type === "check" && block.checked
-              ? "block-editor__input--done"
-              : ""
-          }`}
-          value={block.text}
-          rows={1}
-          placeholder={placeholder}
-          onFocus={() => onFocusBlock(block.id)}
-          onChange={(e) => onTextChange(block, e.target.value)}
-          onKeyDown={(e) => onKeyDown(e, block)}
-        />
+        textareaEl
       )}
 
       <div className="block-editor__actions">

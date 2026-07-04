@@ -7,6 +7,7 @@ export type NoteBlockType =
   | "number" // lista numerada
   | "check" // checklist
   | "quote" // cita
+  | "location" // ubicación (link a Google Maps)
   | "divider"; // separador horizontal
 
 export interface NoteBlock {

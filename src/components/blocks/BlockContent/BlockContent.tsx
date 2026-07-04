@@ -1,5 +1,6 @@
 "use client";
 import { type ReactNode } from "react";
+import MapLink from "@/components/ui/MapLink/MapLink";
 import type { NoteBlock } from "@/types/blocks";
 import "./BlockContent.scss";
 
@@ -154,6 +155,12 @@ export default function BlockContent({
                 <RichText text={block.text} />
               </blockquote>
             );
+          case "location":
+            return block.text.trim() ? (
+              <p key={block.id} className="blocks-view__loc">
+                <MapLink location={block.text} showOpenIcon />
+              </p>
+            ) : null;
           case "divider":
             return <hr key={block.id} className="blocks-view__hr" />;
           default:

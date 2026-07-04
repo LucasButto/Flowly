@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/navigation";
 import { useRoutines } from "@/contexts/RoutinesContext";
 import IconButton from "@/components/ui/IconButton/IconButton";
+import MapLink from "@/components/ui/MapLink/MapLink";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
@@ -156,6 +157,10 @@ export default function RoutineCard({
 
         {routine.description && (
           <p className="routine-card__desc">{routine.description}</p>
+        )}
+
+        {routine.location && (
+          <MapLink location={routine.location} className="routine-card__loc" />
         )}
 
         {mode === "all" && (

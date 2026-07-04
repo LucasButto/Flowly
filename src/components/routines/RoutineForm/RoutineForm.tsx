@@ -11,6 +11,7 @@ import TimeField from "@/components/ui/Field/TimeField";
 import TextArea from "@/components/ui/Field/TextArea";
 import ColorPicker from "@/components/ui/ColorPicker/ColorPicker";
 import IconPicker from "@/components/ui/IconPicker/IconPicker";
+import MapEmbed from "@/components/ui/MapEmbed/MapEmbed";
 import DaySelector from "@/components/routines/DaySelector/DaySelector";
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { ALL_DAYS, type Weekday } from "@/types/common";
@@ -38,6 +39,7 @@ interface Draft {
   frequency: RoutineFrequency;
   tag: string;
   description: string;
+  location: string;
   color: string;
   icon: string;
 }
@@ -50,6 +52,7 @@ const emptyDraft = (): Draft => ({
   frequency: "daily",
   tag: "",
   description: "",
+  location: "",
   color: DEFAULT_COLOR,
   icon: "",
 });
@@ -85,6 +88,7 @@ export default function RoutineForm({
         frequency: routine.frequency,
         tag: routine.tag,
         description: routine.description,
+        location: routine.location ?? "",
         color: routine.color,
         icon: routine.icon ?? "",
       });
@@ -128,6 +132,7 @@ export default function RoutineForm({
       frequency: draft.frequency,
       tag: draft.tag.trim(),
       description: draft.description.trim(),
+      location: draft.location.trim(),
       color: draft.color,
       icon: draft.icon,
     };
@@ -299,6 +304,15 @@ export default function RoutineForm({
             onChange={(e) => set("tag", e.target.value)}
             placeholder={t("fieldTagPlaceholder")}
           />
+        </Field>
+
+        <Field label={tc("location")} optional>
+          <TextInput
+            value={draft.location}
+            onChange={(e) => set("location", e.target.value)}
+            placeholder={tc("locationPlaceholder")}
+          />
+          <MapEmbed location={draft.location} debounceMs={700} />
         </Field>
 
         <Field label={tc("color")}>

@@ -93,6 +93,11 @@
     margin: 0.25rem 0;
   }
 
+  &__loc {
+    display: flex;
+    min-width: 0;
+  }
+
   &__link {
     color: var(--brand);
     text-decoration: underline;
