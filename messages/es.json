@@ -93,7 +93,18 @@
     "noResults": "Sin resultados",
     "clear": "Limpiar",
     "filters": "Filtros",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "location": "Ubicación",
+    "locationPlaceholder": "Dirección, lugar o link de Maps",
+    "viewOnMap": "Ver en mapa",
+    "sort": {
+      "manual": "Manual",
+      "updated": "Última modificación",
+      "newest": "Más recientes",
+      "oldest": "Más antiguas",
+      "alphaAsc": "A-Z",
+      "alphaDesc": "Z-A"
+    }
   },
   "login": {
     "loading": "Cargando Flowly…",
@@ -233,7 +244,6 @@
     "editList": "Editar lista",
     "listName": "Nombre de la lista",
     "listNamePlaceholder": "Ej: Supermercado, Trabajo, Hogar…",
-    "allTasks": "Todas",
     "favorites": "Favoritas",
     "history": "Historial",
     "newTask": "Nueva tarea",
@@ -339,6 +349,9 @@
     "googleExported": "{count, plural, =0 {Sin eventos para exportar} one {# evento exportado} other {# eventos exportados}}",
     "googleNone": "No hay eventos nuevos para sincronizar",
     "googleError": "No se pudo conectar con Google Calendar. Revisá que la API esté activada y los permisos.",
+    "googleExportOne": "Exportar a Google Calendar",
+    "googleExportedOne": "Evento exportado a Google Calendar",
+    "googleAlreadyExists": "Este evento ya existe en Google Calendar",
     "validation": {
       "titleRequired": "El título es obligatorio.",
       "dateRequired": "La fecha es obligatoria.",
@@ -382,6 +395,7 @@
     "block_number": "Lista numerada",
     "block_check": "Checklist",
     "block_quote": "Cita",
+    "block_location": "Ubicación",
     "block_divider": "Separador",
     "deleteTitle": "¿Eliminar nota?",
     "deleteDesc": "Esta acción no se puede deshacer."

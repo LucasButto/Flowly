@@ -36,23 +36,42 @@ import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import FlowIcon from "@/utils/icons";
-import type { Task, TaskStatus, TodoList } from "@/types/todo";
+import type { Task, TodoList } from "@/types/todo";
 import "./todo.scss";
 
-type StatusFilter = TaskStatus | "all";
+type SortOption =
+  | "manual"
+  | "createdDesc"
+  | "createdAsc"
+  | "alphaAsc"
+  | "alphaDesc";
 const SMART = ["all", "favorites", "history"];
+
+function compareTasks(a: Task, b: Task, sortBy: SortOption): number {
+  switch (sortBy) {
+    case "createdDesc":
+      return b.createdAt - a.createdAt;
+    case "createdAsc":
+      return a.createdAt - b.createdAt;
+    case "alphaAsc":
+      return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+    case "alphaDesc":
+      return b.title.localeCompare(a.title, undefined, { sensitivity: "base" });
+    default:
+      return a.order - b.order;
+  }
+}
 
 export default function TodoPage() {
   const t = useTranslations("todo");
   const tc = useTranslations("common");
-  const tst = useTranslations("status");
   const { lists, tasks, loaded, editList, removeTask, removeList, reorder } =
     useTodo();
 
   // "all" = vista resumen de listas; o "favorites" | "history" | listId
   const [selected, setSelected] = useState<string>("all");
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sortBy, setSortBy] = useState<SortOption>("manual");
   // Las tareas completadas quedan visibles (tachadas) por defecto; el usuario
   // las borra con el tacho. El toggle permite ocultarlas si quiere.
   // En listas reales el estado se persiste por lista en Firestore; la vista
@@ -91,8 +110,8 @@ export default function TodoPage() {
   const showCompleted = isRealList
     ? (currentList?.showCompleted ?? true)
     : favShowCompleted;
-  const filtersActive = !!search || statusFilter !== "all";
-  const dndEnabled = isRealList && !filtersActive;
+  const filtersActive = !!search;
+  const dndEnabled = isRealList && !filtersActive && sortBy === "manual";
 
   const heading = useMemo(() => {
     if (selected === "favorites") return t("favorites");
@@ -122,9 +141,6 @@ export default function TodoPage() {
           x.tags.some((tag) => tag.includes(q)),
       );
     }
-    if (statusFilter !== "all")
-      base = base.filter((x) => x.status === statusFilter);
-
     if (selected === "history") {
       return [...base].sort(
         (a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0),
@@ -132,8 +148,8 @@ export default function TodoPage() {
     }
     if (!showCompleted) base = base.filter((x) => x.status !== "completed");
 
-    return [...base].sort((a, b) => a.order - b.order);
-  }, [tasks, selected, isOverview, search, statusFilter, showCompleted]);
+    return [...base].sort((a, b) => compareTasks(a, b, sortBy));
+  }, [tasks, selected, isOverview, search, showCompleted, sortBy]);
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
@@ -302,14 +318,18 @@ export default function TodoPage() {
                     placeholder={t("searchPlaceholder")}
                   />
                 </div>
-                <Select
-                  value={statusFilter}
-                  onChange={(v) => setStatusFilter(v as StatusFilter)}
-                >
-                  <option value="all">{t("allTasks")}</option>
-                  <option value="pending">{tst("pending")}</option>
-                  <option value="completed">{tst("completed")}</option>
-                </Select>
+                {selected !== "history" && (
+                  <Select
+                    value={sortBy}
+                    onChange={(v) => setSortBy(v as SortOption)}
+                  >
+                    <option value="manual">{tc("sort.manual")}</option>
+                    <option value="createdDesc">{tc("sort.newest")}</option>
+                    <option value="createdAsc">{tc("sort.oldest")}</option>
+                    <option value="alphaAsc">{tc("sort.alphaAsc")}</option>
+                    <option value="alphaDesc">{tc("sort.alphaDesc")}</option>
+                  </Select>
+                )}
                 {selected !== "history" && (
                   <label className="todo__toggle">
                     <Switch

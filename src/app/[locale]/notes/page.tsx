@@ -5,6 +5,7 @@ import { useNotes } from "@/contexts/NotesContext";
 import NoteCard from "@/components/notes/NoteCard/NoteCard";
 import NoteEditor from "@/components/notes/NoteEditor/NoteEditor";
 import Button from "@/components/ui/Button/Button";
+import Select from "@/components/ui/Field/Select";
 import EmptyState from "@/components/ui/EmptyState/EmptyState";
 import ConfirmDialog from "@/components/ui/ConfirmDialog/ConfirmDialog";
 import { NotesSkeleton } from "@/components/skeletons/Skeletons";
@@ -15,12 +16,35 @@ import PushPinRoundedIcon from "@mui/icons-material/PushPinRounded";
 import type { Note } from "@/types/note";
 import "./notes.scss";
 
+type SortOption =
+  | "updatedDesc"
+  | "createdDesc"
+  | "createdAsc"
+  | "alphaAsc"
+  | "alphaDesc";
+
+function compareNotes(a: Note, b: Note, sortBy: SortOption): number {
+  switch (sortBy) {
+    case "createdDesc":
+      return b.createdAt - a.createdAt;
+    case "createdAsc":
+      return a.createdAt - b.createdAt;
+    case "alphaAsc":
+      return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+    case "alphaDesc":
+      return b.title.localeCompare(a.title, undefined, { sensitivity: "base" });
+    default:
+      return b.updatedAt - a.updatedAt;
+  }
+}
+
 export default function NotesPage() {
   const t = useTranslations("notes");
   const tc = useTranslations("common");
   const { notes, loaded, removeNote } = useNotes();
 
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("updatedDesc");
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<Note | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Note | null>(null);
@@ -28,13 +52,15 @@ export default function NotesPage() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return notes;
-    return notes.filter(
-      (n) =>
-        n.title.toLowerCase().includes(q) ||
-        n.blocks.some((b) => b.text.toLowerCase().includes(q)),
-    );
-  }, [notes, search]);
+    const base = q
+      ? notes.filter(
+          (n) =>
+            n.title.toLowerCase().includes(q) ||
+            n.blocks.some((b) => b.text.toLowerCase().includes(q)),
+        )
+      : notes;
+    return [...base].sort((a, b) => compareNotes(a, b, sortBy));
+  }, [notes, search, sortBy]);
 
   const pinned = filtered.filter((n) => n.pinned);
   const others = filtered.filter((n) => !n.pinned);
@@ -83,13 +109,25 @@ export default function NotesPage() {
         />
       ) : (
         <>
-          <div className="notes__search">
-            <SearchRoundedIcon />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={tc("searchPlaceholder")}
-            />
+          <div className="notes__toolbar">
+            <div className="notes__search">
+              <SearchRoundedIcon />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={tc("searchPlaceholder")}
+              />
+            </div>
+            <Select
+              value={sortBy}
+              onChange={(v) => setSortBy(v as SortOption)}
+            >
+              <option value="updatedDesc">{tc("sort.updated")}</option>
+              <option value="createdDesc">{tc("sort.newest")}</option>
+              <option value="createdAsc">{tc("sort.oldest")}</option>
+              <option value="alphaAsc">{tc("sort.alphaAsc")}</option>
+              <option value="alphaDesc">{tc("sort.alphaDesc")}</option>
+            </Select>
           </div>
 
           {filtered.length === 0 ? (

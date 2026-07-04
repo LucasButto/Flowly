@@ -93,7 +93,18 @@
     "noResults": "No results",
     "clear": "Clear",
     "filters": "Filters",
-    "apply": "Apply"
+    "apply": "Apply",
+    "location": "Location",
+    "locationPlaceholder": "Address, place or Maps link",
+    "viewOnMap": "View on map",
+    "sort": {
+      "manual": "Manual",
+      "updated": "Last modified",
+      "newest": "Newest first",
+      "oldest": "Oldest first",
+      "alphaAsc": "A-Z",
+      "alphaDesc": "Z-A"
+    }
   },
   "login": {
     "loading": "Loading Flowly…",
@@ -233,7 +244,6 @@
     "editList": "Edit list",
     "listName": "List name",
     "listNamePlaceholder": "E.g. Groceries, Work, Home…",
-    "allTasks": "All",
     "favorites": "Favorites",
     "history": "History",
     "newTask": "New task",
@@ -339,6 +349,9 @@
     "googleExported": "{count, plural, =0 {No events to export} one {# event exported} other {# events exported}}",
     "googleNone": "No new events to sync",
     "googleError": "Couldn't connect to Google Calendar. Check that the API is enabled and your permissions.",
+    "googleExportOne": "Export to Google Calendar",
+    "googleExportedOne": "Event exported to Google Calendar",
+    "googleAlreadyExists": "This event already exists in Google Calendar",
     "validation": {
       "titleRequired": "Title is required.",
       "dateRequired": "Date is required.",
@@ -382,6 +395,7 @@
     "block_number": "Numbered list",
     "block_check": "Checklist",
     "block_quote": "Quote",
+    "block_location": "Location",
     "block_divider": "Divider",
     "deleteTitle": "Delete note?",
     "deleteDesc": "This action cannot be undone."
