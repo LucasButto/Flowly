@@ -1,0 +1,42 @@
+@use "@/styles/variables" as *;
+
+.fl-maplink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.14s ease;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: color 0.14s ease;
+  }
+
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  svg.fl-maplink__ext {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+
+  &:hover {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    svg {
+      color: var(--brand);
+    }
+  }
+}

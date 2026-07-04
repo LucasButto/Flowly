@@ -19,6 +19,8 @@ export interface Routine {
   frequency: RoutineFrequency;
   tag: string;
   description: string;
+  /** Ubicación opcional (dirección, lugar o link de Maps). "" = sin ubicación. */
+  location?: string;
   color: string; // hex
   /** Clave del icono (ver utils/icons). "" / ausente = sin icono. */
   icon?: string;

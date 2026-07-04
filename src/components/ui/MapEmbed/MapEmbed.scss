@@ -1,0 +1,9 @@
+@use "@/styles/variables" as *;
+
+.fl-mapembed {
+  width: 100%;
+  height: 160px;
+  border: 1px solid var(--border);
+  border-radius: $radius;
+  display: block;
+}

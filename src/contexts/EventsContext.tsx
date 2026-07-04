@@ -21,6 +21,7 @@ import {
   googleToFlow,
   flowToGoogle,
   pushGoogleEvent,
+  googleEventExists,
 } from "@/services/googleCalendar";
 import { addDays } from "@/utils/dates";
 import type { FlowEvent, EventInput } from "@/types/event";
@@ -33,6 +34,11 @@ interface EventsContextType {
   removeEvent: (id: string) => Promise<void>;
   importFromGoogle: () => Promise<number>;
   exportToGoogle: () => Promise<number>;
+  /**
+   * Sube un único evento a Google. Verifica primero si el evento vinculado
+   * sigue existiendo: "exists" si ya está, "exported" si se creó (o recreó).
+   */
+  exportOneToGoogle: (event: FlowEvent) => Promise<"exported" | "exists">;
 }
 
 const EventsContext = createContext<EventsContextType | null>(null);
@@ -148,6 +154,28 @@ export function EventsProvider({ children }: { children: ReactNode }) {
     return count;
   }, [user?.uid, events]);
 
+  // Sube un solo evento a Google (desde el detalle del evento). Si el evento ya
+  // estaba vinculado, primero verifica que siga existiendo en Google: si fue
+  // borrado allá, lo vuelve a crear.
+  const exportOneToGoogle = useCallback(
+    async (event: FlowEvent): Promise<"exported" | "exists"> => {
+      if (!user?.uid) return "exported";
+      const tz =
+        Intl.DateTimeFormat().resolvedOptions().timeZone ||
+        "America/Argentina/Buenos_Aires";
+      const token = await getCalendarToken();
+      if (event.googleEventId) {
+        const exists = await googleEventExists(token, event.googleEventId);
+        if (exists) return "exists";
+        // Fue borrado en Google → se vuelve a crear abajo.
+      }
+      const gid = await pushGoogleEvent(token, flowToGoogle(event, tz));
+      await updateEvent(user.uid, event.id, { googleEventId: gid });
+      return "exported";
+    },
+    [user?.uid],
+  );
+
   return (
     <EventsContext.Provider
       value={{
@@ -158,6 +186,7 @@ export function EventsProvider({ children }: { children: ReactNode }) {
         removeEvent,
         importFromGoogle,
         exportToGoogle,
+        exportOneToGoogle,
       }}
     >
       {children}
