@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/Toast/ToastProvider";
 import { useTranslations } from "next-intl";
 import Sidebar from "@/components/layout/Sidebar/Sidebar";
+import ScrollToTop from "@/components/layout/ScrollToTop/ScrollToTop";
 import Brand from "@/components/layout/Brand/Brand";
 import Spinner from "@/components/ui/Spinner/Spinner";
 import Reminders from "@/components/notifications/Reminders/Reminders";
@@ -27,6 +28,7 @@ export default function LoginGate({ children }: { children: ReactNode }) {
 
   return (
     <div className="app-shell">
+      <ScrollToTop />
       <Sidebar />
       <div className="app-main">{children}</div>
       <Reminders />
