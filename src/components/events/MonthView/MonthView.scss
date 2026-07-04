@@ -121,6 +121,24 @@
     @include line-clamp(1);
   }
 
+  &__chip-priority {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-left: auto;
+
+    &--low {
+      background: var(--success);
+    }
+    &--medium {
+      background: var(--warning);
+    }
+    &--high {
+      background: var(--danger);
+    }
+  }
+
   &__more {
     font-size: 0.68rem;
     font-weight: 600;

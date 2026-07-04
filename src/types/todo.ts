@@ -1,4 +1,5 @@
 import type { NoteBlock } from "./blocks";
+import type { Priority } from "./common";
 
 export type TaskStatus = "pending" | "completed";
 
@@ -32,6 +33,10 @@ export interface Task {
   descriptionBlocks?: NoteBlock[];
   status: TaskStatus;
   dueDate: string | null; // "YYYY-MM-DD"
+  /** Prioridad opcional. Ausente/"" = sin prioridad. */
+  priority?: Priority | "";
+  /** Ubicación opcional (dirección, lugar o link de Maps). "" = sin ubicación. */
+  location?: string;
   tags: string[];
   subtasks: Subtask[];
   favorite: boolean;

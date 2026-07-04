@@ -135,6 +135,24 @@ $gutter: 56px;
     @include line-clamp(1);
   }
 
+  &__chip-priority {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-left: auto;
+
+    &--low {
+      background: var(--success);
+    }
+    &--medium {
+      background: var(--warning);
+    }
+    &--high {
+      background: var(--danger);
+    }
+  }
+
   // ─── Body ───
   &__body {
     flex: 1;

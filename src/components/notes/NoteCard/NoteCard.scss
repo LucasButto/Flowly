@@ -32,6 +32,13 @@
     margin: -0.3rem -0.5rem -0.45rem 0;
   }
 
+  &__head-left {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
   &__title-row {
     display: flex;
     align-items: flex-start;

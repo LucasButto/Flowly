@@ -81,6 +81,8 @@ export async function createTask(uid: string, input: TaskInput, order: number) {
     listId: input.listId,
     status: input.status ?? "pending",
     dueDate: input.dueDate ?? null,
+    priority: input.priority ?? "",
+    location: input.location ?? "",
     tags: input.tags ?? [],
     subtasks: input.subtasks ?? [],
     favorite: input.favorite ?? false,

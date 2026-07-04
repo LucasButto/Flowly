@@ -1,3 +1,7 @@
+/** Prioridad opcional de una tarea, evento o nota. Ausente = sin prioridad. */
+export type Priority = "low" | "medium" | "high";
+export const PRIORITIES: Priority[] = ["low", "medium", "high"];
+
 /** Día de la semana en convención JS: 0 = Domingo … 6 = Sábado. */
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 

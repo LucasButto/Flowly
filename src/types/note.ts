@@ -1,4 +1,5 @@
 import type { NoteBlock } from "./blocks";
+import type { Priority } from "./common";
 
 export type { NoteBlock, NoteBlockType } from "./blocks";
 
@@ -9,6 +10,8 @@ export interface Note {
   color: string;
   /** Clave del icono (ver utils/icons). "" / ausente = sin icono. */
   icon?: string;
+  /** Prioridad opcional. "" / ausente = sin prioridad. */
+  priority?: Priority | "";
   pinned: boolean;
   blocks: NoteBlock[];
   createdAt: number;

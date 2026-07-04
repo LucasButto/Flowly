@@ -20,10 +20,13 @@ import Select from "@/components/ui/Field/Select";
 import Switch from "@/components/ui/Switch/Switch";
 import ColorPicker from "@/components/ui/ColorPicker/ColorPicker";
 import IconPicker from "@/components/ui/IconPicker/IconPicker";
+import PriorityPicker from "@/components/ui/PriorityPicker/PriorityPicker";
+import MapEmbed from "@/components/ui/MapEmbed/MapEmbed";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { DEFAULT_COLOR } from "@/utils/colors";
 import type { FlowEvent, EventInput, EventRecurrence } from "@/types/event";
+import type { Priority } from "@/types/common";
 import "./EventForm.scss";
 
 interface EventFormProps {
@@ -70,6 +73,7 @@ export default function EventForm({
   const [tagDraft, setTagDraft] = useState("");
   const [color, setColor] = useState<string>(DEFAULT_COLOR);
   const [icon, setIcon] = useState<string>("");
+  const [priority, setPriority] = useState<Priority | "">("");
   const [recurrence, setRecurrence] = useState<EventRecurrence>("none");
   const [recurrenceEnd, setRecurrenceEnd] = useState("");
   const [businessDayOffset, setBusinessDayOffset] = useState(1);
@@ -96,6 +100,7 @@ export default function EventForm({
       setTags(event.tags);
       setColor(event.color);
       setIcon(event.icon ?? "");
+      setPriority(event.priority ?? "");
       // Al editar "solo este", se vuelve un evento suelto (sin recurrencia)
       setRecurrence(editOneDate ? "none" : event.recurrence);
       setRecurrenceEnd(editOneDate ? "" : (event.recurrenceEnd ?? ""));
@@ -114,6 +119,7 @@ export default function EventForm({
       setTags([]);
       setColor(DEFAULT_COLOR);
       setIcon("");
+      setPriority("");
       setRecurrence("none");
       setRecurrenceEnd("");
       setBusinessDayOffset(1);
@@ -145,6 +151,7 @@ export default function EventForm({
     tags,
     color,
     icon,
+    priority,
     recurrence,
     recurrenceEnd:
       recurrence !== "none" && recurrenceEnd ? recurrenceEnd : null,
@@ -303,6 +310,7 @@ export default function EventForm({
             onChange={(e) => setLocation(e.target.value)}
             placeholder={t("locationPlaceholder")}
           />
+          <MapEmbed location={location} debounceMs={700} />
         </Field>
 
         <div className="event-form__row">
@@ -319,7 +327,19 @@ export default function EventForm({
               <option value="businessDay">{t("recurrenceBusinessDay")}</option>
             </Select>
           </Field>
-          {recurrence !== "none" && (
+          <Field label={t("reminder")}>
+            <Select value={reminder} onChange={(v) => setReminder(v)}>
+              {REMINDER_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {t(o.key)}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+
+        {recurrence !== "none" && (
+          <div className="event-form__row">
             <Field label={t("recurrenceEnd")} optional>
               <TextInput
                 type="date"
@@ -327,44 +347,38 @@ export default function EventForm({
                 onChange={(e) => setRecurrenceEnd(e.target.value)}
               />
             </Field>
-          )}
-        </div>
-
-        {recurrence === "businessDay" && (
-          <Field label={t("businessDayLabel")} hint={t("businessDayHint")}>
-            <Select
-              value={String(businessDayOffset)}
-              onChange={(v) => setBusinessDayOffset(Number(v))}
-            >
-              <option value="1">{t("bd1")}</option>
-              <option value="2">{t("bd2")}</option>
-              <option value="3">{t("bd3")}</option>
-              <option value="4">{t("bd4")}</option>
-              <option value="5">{t("bd5")}</option>
-              <option value="-1">{t("bdLast1")}</option>
-              <option value="-2">{t("bdLast2")}</option>
-              <option value="-3">{t("bdLast3")}</option>
-            </Select>
-          </Field>
+            {recurrence === "businessDay" && (
+              <Field label={t("businessDayLabel")} hint={t("businessDayHint")}>
+                <Select
+                  value={String(businessDayOffset)}
+                  onChange={(v) => setBusinessDayOffset(Number(v))}
+                >
+                  <option value="1">{t("bd1")}</option>
+                  <option value="2">{t("bd2")}</option>
+                  <option value="3">{t("bd3")}</option>
+                  <option value="4">{t("bd4")}</option>
+                  <option value="5">{t("bd5")}</option>
+                  <option value="-1">{t("bdLast1")}</option>
+                  <option value="-2">{t("bdLast2")}</option>
+                  <option value="-3">{t("bdLast3")}</option>
+                </Select>
+              </Field>
+            )}
+          </div>
         )}
-
-        <Field label={t("reminder")}>
-          <Select value={reminder} onChange={(v) => setReminder(v)}>
-            {REMINDER_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {t(o.key)}
-              </option>
-            ))}
-          </Select>
-        </Field>
 
         <Field label={tc("color")}>
           <ColorPicker value={color} onChange={setColor} />
         </Field>
 
-        <Field label={tc("icon")} optional>
-          <IconPicker value={icon} onChange={setIcon} accent={color} />
-        </Field>
+        <div className="event-form__row">
+          <Field label={tc("icon")} optional>
+            <IconPicker value={icon} onChange={setIcon} accent={color} />
+          </Field>
+          <Field label={tc("priority")} optional>
+            <PriorityPicker value={priority} onChange={setPriority} />
+          </Field>
+        </div>
 
         <Field label={tc("tags")} optional>
           <div className="event-form__tags">

@@ -77,6 +77,11 @@ export default function MonthView({
                       </span>
                     )}
                     <span className="month-view__chip-title">{ev.title}</span>
+                    {ev.priority && (
+                      <span
+                        className={`month-view__chip-priority month-view__chip-priority--${ev.priority}`}
+                      />
+                    )}
                   </button>
                 ))}
                 {dayEvents.length > MAX_CHIPS && (

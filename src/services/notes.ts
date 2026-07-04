@@ -32,6 +32,7 @@ export async function createNote(uid: string, input: NoteInput) {
     title: input.title,
     color: input.color,
     icon: input.icon ?? "",
+    priority: input.priority ?? "",
     pinned: input.pinned ?? false,
     blocks: input.blocks ?? [],
     createdAt: now,

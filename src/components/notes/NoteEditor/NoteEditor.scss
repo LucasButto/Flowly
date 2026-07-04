@@ -38,6 +38,16 @@
     }
   }
 
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+
+    @include respond-down(sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+
   &__icons {
     display: flex;
     flex-direction: column;

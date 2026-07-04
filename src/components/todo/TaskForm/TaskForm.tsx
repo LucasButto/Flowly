@@ -8,12 +8,15 @@ import Field from "@/components/ui/Field/Field";
 import TextInput from "@/components/ui/Field/TextInput";
 import Select from "@/components/ui/Field/Select";
 import IconButton from "@/components/ui/IconButton/IconButton";
+import PriorityPicker from "@/components/ui/PriorityPicker/PriorityPicker";
+import MapEmbed from "@/components/ui/MapEmbed/MapEmbed";
 import ListForm from "@/components/todo/ListForm/ListForm";
 import BlockEditor from "@/components/blocks/BlockEditor/BlockEditor";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
 import type { Task, Subtask } from "@/types/todo";
+import type { Priority } from "@/types/common";
 import type { NoteBlock } from "@/types/blocks";
 import { newId } from "@/utils/ids";
 import {
@@ -46,6 +49,8 @@ export default function TaskForm({
   const [title, setTitle] = useState("");
   const [descBlocks, setDescBlocks] = useState<NoteBlock[]>([newBlock()]);
   const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState<Priority | "">("");
+  const [location, setLocation] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagDraft, setTagDraft] = useState("");
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
@@ -74,6 +79,8 @@ export default function TaskForm({
             : [newBlock()],
       );
       setDueDate(task.dueDate ?? "");
+      setPriority(task.priority ?? "");
+      setLocation(task.location ?? "");
       setTags(task.tags);
       setSubtasks(task.subtasks);
       setListId(task.listId);
@@ -81,6 +88,8 @@ export default function TaskForm({
       setTitle("");
       setDescBlocks([newBlock()]);
       setDueDate("");
+      setPriority("");
+      setLocation("");
       setTags([]);
       setSubtasks([]);
       setListId(defaultListId ?? lists[0]?.id ?? "");
@@ -129,6 +138,8 @@ export default function TaskForm({
         description: blocksToPlainText(blocksClean),
         descriptionBlocks: blocksClean,
         dueDate: dueDate || null,
+        priority,
+        location: location.trim(),
         tags,
         subtasks,
       };
@@ -204,6 +215,21 @@ export default function TaskForm({
             />
           </Field>
         </div>
+
+        <div className="task-form__row">
+          <Field label={tc("priority")} optional>
+            <PriorityPicker value={priority} onChange={setPriority} />
+          </Field>
+        </div>
+
+        <Field label={tc("location")} optional>
+          <TextInput
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder={tc("locationPlaceholder")}
+          />
+          <MapEmbed location={location} debounceMs={700} />
+        </Field>
 
         <Field label={tc("tags")} optional>
           <div className="task-form__tags">

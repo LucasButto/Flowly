@@ -91,6 +91,11 @@ export default function TimeGrid({
                 >
                   <FlowIcon name={ev.icon} className="time-grid__chip-icon" />
                   <span className="time-grid__chip-text">{ev.title}</span>
+                  {ev.priority && (
+                    <span
+                      className={`time-grid__chip-priority time-grid__chip-priority--${ev.priority}`}
+                    />
+                  )}
                 </button>
               ))}
             </div>
@@ -167,6 +172,11 @@ export default function TimeGrid({
                       <span className="time-grid__event-text">
                         {pos.event.title}
                       </span>
+                      {pos.event.priority && (
+                        <span
+                          className={`time-grid__chip-priority time-grid__chip-priority--${pos.event.priority}`}
+                        />
+                      )}
                     </span>
                     {pos.event.startTime && (
                       <span className="time-grid__event-time">

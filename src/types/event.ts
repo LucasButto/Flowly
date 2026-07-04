@@ -1,3 +1,5 @@
+import type { Priority } from "./common";
+
 export type EventRecurrence =
   | "none"
   | "daily"
@@ -18,6 +20,8 @@ export interface FlowEvent {
   color: string;
   /** Clave del icono (ver utils/icons). "" / ausente = sin icono. */
   icon?: string;
+  /** Prioridad opcional. "" / ausente = sin prioridad. */
+  priority?: Priority | "";
   recurrence: EventRecurrence;
   recurrenceEnd: string | null; // "YYYY-MM-DD" límite de repetición
   // Para recurrence "businessDay": ordinal del día hábil del mes.

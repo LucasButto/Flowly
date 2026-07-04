@@ -1,0 +1,25 @@
+@use "@/styles/variables" as *;
+
+.fl-prioritybadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: $radius-pill;
+
+  &--low {
+    color: var(--success);
+    background: rgb(var(--success-rgb) / 0.13);
+  }
+
+  &--medium {
+    color: var(--warning);
+    background: rgb(var(--warning-rgb) / 0.13);
+  }
+
+  &--high {
+    color: var(--danger);
+    background: rgb(var(--danger-rgb) / 0.13);
+  }
+}

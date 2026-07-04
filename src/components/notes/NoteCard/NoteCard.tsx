@@ -2,6 +2,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { useNotes } from "@/contexts/NotesContext";
 import IconButton from "@/components/ui/IconButton/IconButton";
+import PriorityBadge from "@/components/ui/PriorityBadge/PriorityBadge";
 import BlockContent from "@/components/blocks/BlockContent/BlockContent";
 import PushPinRoundedIcon from "@mui/icons-material/PushPinRounded";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
@@ -50,13 +51,16 @@ export default function NoteCard({ note, onEdit, onDelete }: NoteCardProps) {
 
       {/* Cabecera: fecha de creación a la izquierda, acciones a la derecha */}
       <header className="note-card__head">
-        <span className="note-card__date">
-          {formatDate(
-            new Date(note.createdAt),
-            { day: "numeric", month: "short" },
-            locale,
-          )}
-        </span>
+        <div className="note-card__head-left">
+          <span className="note-card__date">
+            {formatDate(
+              new Date(note.createdAt),
+              { day: "numeric", month: "short" },
+              locale,
+            )}
+          </span>
+          <PriorityBadge priority={note.priority} />
+        </div>
         <div className="note-card__tools" onClick={(e) => e.stopPropagation()}>
           <IconButton
             label={note.pinned ? t("unpin") : t("pin")}

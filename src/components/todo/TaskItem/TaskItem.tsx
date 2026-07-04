@@ -5,6 +5,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useTodo } from "@/contexts/TodoContext";
 import IconButton from "@/components/ui/IconButton/IconButton";
+import PriorityBadge from "@/components/ui/PriorityBadge/PriorityBadge";
+import MapLink from "@/components/ui/MapLink/MapLink";
 import BlockContent from "@/components/blocks/BlockContent/BlockContent";
 import DragIndicatorRoundedIcon from "@mui/icons-material/DragIndicatorRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
@@ -130,9 +132,21 @@ export default function TaskItem({
           aria-label={completed ? ts("pending") : ts("completed")}
         />
 
-        <button className="task-item__content" onClick={() => onEdit(task)}>
+        <div
+          className="task-item__content"
+          role="button"
+          tabIndex={0}
+          onClick={() => onEdit(task)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onEdit(task);
+            }
+          }}
+        >
           <span className="task-item__title">{task.title}</span>
           <div className="task-item__meta">
+            <PriorityBadge priority={task.priority} />
             {task.dueDate && (
               <span
                 className={`task-item__due ${
@@ -162,13 +176,14 @@ export default function TaskItem({
                 <NotesRoundedIcon />
               </span>
             )}
+            {task.location && <MapLink location={task.location} />}
             {task.tags.map((tag) => (
               <span key={tag} className="task-item__tag">
                 #{tag}
               </span>
             ))}
           </div>
-        </button>
+        </div>
 
         <div className="task-item__tools">
           {expandable && (
